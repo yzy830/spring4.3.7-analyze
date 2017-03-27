@@ -301,6 +301,7 @@ org\springframework\instrument\classloading\SimpleInstrumentableClassLoader.clas
 org\springframework\context\annotation\AspectJAutoProxyRegistrar.class
 org\springframework\jndi\JndiTemplateEditor.class
 org\springframework\context\annotation\MBeanExportConfiguration$SpecificPlatform.class
+com\gerald\test\TestBean.class
 org\springframework\context\support\ResourceBundleMessageSource$MessageSourceControl$1.class
 org\springframework\cache\support\NullValue.class
 org\springframework\validation\DefaultMessageCodesResolver$Format.class
@@ -573,6 +574,7 @@ org\springframework\context\annotation\CommonAnnotationBeanPostProcessor$1.class
 org\springframework\scheduling\annotation\SchedulingConfigurer.class
 org\springframework\cache\support\SimpleCacheManager.class
 org\springframework\scheduling\concurrent\ConcurrentTaskScheduler$1.class
+com\gerald\test\App.class
 org\springframework\context\annotation\ConditionContext.class
 org\springframework\format\number\money\Jsr354NumberFormatAnnotationFormatterFactory$PatternDecoratingFormatter.class
 org\springframework\cache\interceptor\KeyGenerator.class
