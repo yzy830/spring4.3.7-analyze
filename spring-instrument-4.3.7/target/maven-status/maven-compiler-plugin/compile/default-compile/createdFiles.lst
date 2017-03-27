@@ -1,0 +1,2 @@
+org\springframework\App.class
+org\springframework\instrument\InstrumentationSavingAgent.class

@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.gerald</groupId>
+    <artifactId>spring4.3.7-analyze</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>spring-context-4.3.7</artifactId>
+  <name>spring-context-4.3.7</name>
+  <url>http://maven.apache.org</url>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <dependencies>
+    <dependency>
+        <groupId>com.gerald</groupId>
+        <artifactId>spring-core-4.3.7</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>com.gerald</groupId>
+        <artifactId>spring-beans-4.3.7</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>com.gerald</groupId>
+        <artifactId>spring-aop-4.3.7</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>com.gerald</groupId>
+        <artifactId>spring-expression-4.3.7</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>com.gerald</groupId>
+        <artifactId>spring-instrument-4.3.7</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+  
+    <dependency>
+	    <groupId>javax.ejb</groupId>
+	    <artifactId>ejb-api</artifactId>
+	    <version>3.0</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>javax.enterprise.concurrent</groupId>
+	    <artifactId>javax.enterprise.concurrent-api</artifactId>
+	    <version>1.0</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>javax.inject</groupId>
+	    <artifactId>javax.inject</artifactId>
+	    <version>1</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>javax.money</groupId>
+	    <artifactId>money-api</artifactId>
+	    <version>1.0.1</version>
+	</dependency>
+
+    <dependency>
+	    <groupId>javax.validation</groupId>
+	    <artifactId>validation-api</artifactId>
+	    <version>1.0.0.GA</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>joda-time</groupId>
+	    <artifactId>joda-time</artifactId>
+	    <version>2.9.7</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>org.aspectj</groupId>
+	    <artifactId>aspectjweaver</artifactId>
+	    <version>1.8.9</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>org.beanshell</groupId>
+	    <artifactId>bsh</artifactId>
+	    <version>2.0b5</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>org.eclipse.persistence</groupId>
+	    <artifactId>javax.persistence</artifactId>
+	    <version>2.0.0</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>org.hibernate</groupId>
+	    <artifactId>hibernate-validator</artifactId>
+	    <version>4.3.2.Final</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>org.jruby</groupId>
+	    <artifactId>jruby</artifactId>
+	    <version>1.7.26</version>
+	</dependency>
+  </dependencies>
+  
+  <build>
+    <finalName>spring-tx-analyze</finalName>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+                <target>1.8</target>
+                <source>1.8</source>
+                <compilerArgs>
+                    <arg>-parameters</arg>
+                </compilerArgs>
+            </configuration>
+        </plugin>
+    </plugins>
+  </build>
+</project>
