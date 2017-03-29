@@ -303,6 +303,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 						@Override
 						public Object getObject() throws BeansException {
 							try {
+							    // 这里在创建Bean，并执行BeanPostProcessor
 								return createBean(beanName, mbd, args);
 							}
 							catch (BeansException ex) {

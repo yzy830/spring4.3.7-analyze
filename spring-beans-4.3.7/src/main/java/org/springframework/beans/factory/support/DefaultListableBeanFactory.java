@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
 import javax.inject.Provider;
 
 import org.springframework.beans.BeanUtils;
@@ -152,10 +153,21 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	/** Whether to allow eager class loading even for lazy-init beans */
 	private boolean allowEagerClassLoading = true;
 
-	/** Optional OrderComparator for dependency Lists and arrays */
+	/** 
+	 * <p>
+	 * 用于处理{@code Order}标签和{@code Ordered}接口，在AnnotatedBeanDefinitionReader中，将设置为
+	 * {@code AnnotationAwareOrderComparator}
+	 * </p>
+	 * 
+	 * Optional OrderComparator for dependency Lists and arrays */
 	private Comparator<Object> dependencyComparator;
 
-	/** Resolver to use for checking if a bean definition is an autowire candidate */
+	/** 
+	 * <p>
+	 * 在AnnotatedBeanDefinitionReader中，将设置为{@code ContextAnnotationAutowireCandidateResolver}
+	 * </p>
+	 * 
+	 * Resolver to use for checking if a bean definition is an autowire candidate */
 	private AutowireCandidateResolver autowireCandidateResolver = new SimpleAutowireCandidateResolver();
 
 	/** Map from dependency type to corresponding autowired value */
@@ -276,6 +288,11 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	}
 
 	/**
+	 * <p>
+     * 用于处理{@code Order}标签和{@code Ordered}接口，在AnnotatedBeanDefinitionReader中，将设置为
+     * {@code AnnotationAwareOrderComparator}
+     * </p>
+	 * 
 	 * Return the dependency comparator for this BeanFactory (may be {@code null}.
 	 * @since 4.0
 	 */
@@ -284,6 +301,11 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	}
 
 	/**
+	 * <p>
+	 * 设置{@code AutowiredCandidateResolver}。如果{@code AutowiredCandidateResolver}的实现类，
+	 * 实现了{@code BeanFactoryAware}，则会调用setBeanFactory(this)完成初注入
+	 * </p>
+	 * 
 	 * Set a custom autowire candidate resolver for this BeanFactory to use
 	 * when deciding whether a bean definition should be considered as a
 	 * candidate for autowiring.
@@ -308,6 +330,10 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	}
 
 	/**
+	 * <p>
+     * 在AnnotatedBeanDefinitionReader中，将设置为{@code ContextAnnotationAutowireCandidateResolver}
+     * </p>
+     * 
 	 * Return the autowire candidate resolver for this BeanFactory (never {@code null}).
 	 */
 	public AutowireCandidateResolver getAutowireCandidateResolver() {
@@ -764,6 +790,9 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		}
 
 		// Trigger post-initialization callback for all applicable beans...
+		// 在所有的singleton bean创建完毕之后，立刻执行SmartInitializingSingleton。例如
+		// EventListenerMethodProcessor会在此刻执行，创所有的由@EventListener标注的方法，
+		// 包装为一个代理类，注册到ApplicationContext的applicationListeners中
 		for (String beanName : beanNames) {
 			Object singletonInstance = getSingleton(beanName);
 			if (singletonInstance instanceof SmartInitializingSingleton) {

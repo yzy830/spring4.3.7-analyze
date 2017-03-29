@@ -1032,6 +1032,17 @@ public abstract class AnnotationUtils {
 	}
 
 	/**
+	 * <p>
+	 * 提取一个Annotation实例的属性值，保存为AnnotationAttributes。
+	 * <ol>
+     * <li>如果{@code classValuesAsString}为true，则Class类型的属性会以类名替换、Class[]会以类名数组替换</li>
+     * <li>
+     * 如果{@code nestedAnnotationsAsMap}为true，则Annotation类型的属性会提取为AnnotationAttributes，
+     * Annotation[]提取为AnnotationAttributes数组
+     * </li>
+     * </ol>
+	 * </p>
+	 * 
 	 * Retrieve the given annotation's attributes as an {@link AnnotationAttributes} map.
 	 * <p>This method provides fully recursive annotation reading capabilities on par with
 	 * the reflection-based {@link org.springframework.core.type.StandardAnnotationMetadata}.
@@ -1088,6 +1099,17 @@ public abstract class AnnotationUtils {
 	}
 
 	/**
+	 * <p>
+	 * 这个方法主要实在处理Class、Class[]、Annotation、Annotation[]的转换。
+	 * <ol>
+	 * <li>如果{@code classValuesAsString}为true，则Class会以类名替换、Class[]会以类名数组替换</li>
+	 * <li>
+	 * 如果{@code nestedAnnotationsAsMap}为true，则Annotation会提取AnnotationAttributes，
+	 * Annotation[]提取为AnnotationAttributes数组
+	 * </li>
+	 * </ol>
+	 * </p>
+	 * 
 	 * Adapt the given value according to the given class and nested annotation settings.
 	 * <p>Nested annotations will be
 	 * {@linkplain #synthesizeAnnotation(Annotation, AnnotatedElement) synthesized}.
@@ -1122,6 +1144,7 @@ public abstract class AnnotationUtils {
 
 		if (value instanceof Annotation) {
 			Annotation annotation = (Annotation) value;
+			// 当nestedAnnotationsAsMap为true时，将嵌套的Annotation解析为AnnotationAttributes
 			if (nestedAnnotationsAsMap) {
 				return getAnnotationAttributes(annotatedElement, annotation, classValuesAsString, true);
 			}
@@ -1306,6 +1329,10 @@ public abstract class AnnotationUtils {
 	}
 
 	/**
+	 * <p>
+	 * 获得一个annotation的"{@code value}"属性的值
+	 * </p>
+	 * 
 	 * Retrieve the <em>value</em> of the {@code value} attribute of a
 	 * single-element Annotation, given an annotation instance.
 	 * @param annotation the annotation instance from which to retrieve the value
@@ -1317,6 +1344,10 @@ public abstract class AnnotationUtils {
 	}
 
 	/**
+	 * <p>
+	 * 获得指定属性(attributeName)的值
+	 * </p>
+	 * 
 	 * Retrieve the <em>value</em> of a named attribute, given an annotation instance.
 	 * @param annotation the annotation instance from which to retrieve the value
 	 * @param attributeName the name of the attribute value to retrieve
@@ -1328,6 +1359,7 @@ public abstract class AnnotationUtils {
 			return null;
 		}
 		try {
+		    // 每个annotation属性都是一个方法，通过反射调用这个方法可以获得属性值
 			Method method = annotation.annotationType().getDeclaredMethod(attributeName);
 			ReflectionUtils.makeAccessible(method);
 			return method.invoke(annotation);
@@ -1742,6 +1774,7 @@ public abstract class AnnotationUtils {
 	 * @since 4.2
 	 */
 	static List<Method> getAttributeMethods(Class<? extends Annotation> annotationType) {
+	    // TODO:yang830, 这里Spring自定义了一个ConcurrentReferenceHashMap来处理并发和缓存，后续再分析其实现和对性能的影响
 		List<Method> methods = attributeMethodsCache.get(annotationType);
 		if (methods != null) {
 			return methods;
@@ -1749,6 +1782,9 @@ public abstract class AnnotationUtils {
 
 		methods = new ArrayList<Method>();
 		for (Method method : annotationType.getDeclaredMethods()) {
+		    /* 
+		     * isAttributeMethod这个调用感觉是多余的。一个Annotation不能继承接口，其所声明方法的参数和返回值都有严格限制
+		     * */
 			if (isAttributeMethod(method)) {
 				ReflectionUtils.makeAccessible(method);
 				methods.add(method);
@@ -1760,6 +1796,11 @@ public abstract class AnnotationUtils {
 	}
 
 	/**
+	 * <p>
+	 * 或者在指定的element(AnnotatedElement，因此可以是Field/Method/Class)上，指定名称(annotationName)的Annotation。
+	 * 如果不存在，则返回null
+	 * </p>
+	 * 
 	 * Get the annotation with the supplied {@code annotationName} on the
 	 * supplied {@code element}.
 	 * @param element the element to search on

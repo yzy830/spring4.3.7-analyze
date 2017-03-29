@@ -17,6 +17,10 @@
 package org.springframework.core.type;
 
 /**
+ * <p>
+ *  定义标准接口来获得类的基本元数据信息，例如类的名称、父类的名称
+ * </p>
+ * 
  * Interface that defines abstract metadata of a specific class,
  * in a form that does not require that class to be loaded yet.
  *
@@ -61,6 +65,11 @@ public interface ClassMetadata {
 	boolean isFinal();
 
 	/**
+	 * <p>
+	 * 这里，independent的定义是：一个类可以独立声明和使用。因此，方法类和匿名类肯定<b>不是独立的</b>；
+	 * 内部类只有在静态的情况下才<b>独立</b>；顶级类肯定是独立的
+	 * </p>
+	 * 
 	 * Determine whether the underlying class is independent,
 	 * i.e. whether it is a top-level class or a nested class
 	 * (static inner class) that can be constructed independent
@@ -69,6 +78,12 @@ public interface ClassMetadata {
 	boolean isIndependent();
 
 	/**
+	 * <p>
+	 *  这个方法判断一个类是否有外部类。在java中，enclosing class和declaring class的区别是：
+	 *  如果一个类是方法局部类或者匿名类，那么{@code Class#getDeclaringClass()}返回的结果是null；
+	 *  而{@code Class#getEnclosingClass()}能够正确返回外围类
+	 * </p>
+	 * 
 	 * Return whether the underlying class has an enclosing class
 	 * (i.e. the underlying class is an inner/nested class or
 	 * a local class within a method).

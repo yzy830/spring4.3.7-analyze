@@ -157,6 +157,7 @@ public abstract class ClassUtils {
 	public static ClassLoader getDefaultClassLoader() {
 		ClassLoader cl = null;
 		try {
+		    // 首先尝试使用Thread的context classloader。由于不知道框架在哪一种部署环境中，这是一种通用的写法
 			cl = Thread.currentThread().getContextClassLoader();
 		}
 		catch (Throwable ex) {
@@ -166,6 +167,7 @@ public abstract class ClassUtils {
 			// No thread context class loader -> use class loader of this class.
 			cl = ClassUtils.class.getClassLoader();
 			if (cl == null) {
+			    // 什么情况会走到这个分支？执行到这里，说明ClassUtils已经加载，那么他必然存在一个classloader
 				// getClassLoader() returning null indicates the bootstrap ClassLoader
 				try {
 					cl = ClassLoader.getSystemClassLoader();

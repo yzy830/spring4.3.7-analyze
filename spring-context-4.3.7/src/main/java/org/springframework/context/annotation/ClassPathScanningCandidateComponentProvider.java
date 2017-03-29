@@ -88,6 +88,9 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 
 	private ResourcePatternResolver resourcePatternResolver;
 
+	/**
+	 * 用于给每一个Class文件创建一个MetadataReader
+	 */
 	private MetadataReaderFactory metadataReaderFactory;
 
 
@@ -170,6 +173,13 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 	}
 
 	/**
+	 * <p>
+	 * 在scanner中注册{@code Component} filter。
+	 * 
+	 * 实现中，使用class name和ClassLoader尝试加载<code>java.annotaion.ManagedBean</code>和
+	 * <code>javax.inject.Named</code>，以支持JAVA EE标准。用这种方式，可以实现选择性的支持
+	 * </p>
+	 * 
 	 * Register the default filter for {@link Component @Component}.
 	 * <p>This will implicitly register all annotations that have the
 	 * {@link Component @Component} meta-annotation including the

@@ -20,6 +20,14 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.util.Assert;
 
 /**
+ * <p>
+ * 描述一个Bean的Scope信息，包括两个方面
+ * <ol>
+ *  <li>{@code #scopeName}：{@code BeanDefinition#SCOPE_SINGLETON}或者{@code BeanDefinition#SCOPE_PROTOTYPE}</li>
+ *  <li>{@code #scopedProxyMode}: 代理方式，默认是不使用代理</li>
+ * </ol>
+ * </p>
+ * 
  * Describes scope characteristics for a Spring-managed bean including the scope
  * name and the scoped-proxy behavior.
  *

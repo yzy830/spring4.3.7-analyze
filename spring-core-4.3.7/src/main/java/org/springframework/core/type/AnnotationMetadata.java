@@ -19,6 +19,11 @@ package org.springframework.core.type;
 import java.util.Set;
 
 /**
+ * <p>
+ * 定义了一个Class的Annotation元数据访问接口。这个接口继承了{@code ClassMetadata}和{@code AnnotatedTypeMeta}，从而
+ * 可以获得一个类的基本元数据以及获得一个Annotation的属性信息。
+ * </p>
+ * 
  * Interface that defines abstract access to the annotations of a specific
  * class, in a form that does not require that class to be loaded yet.
  *

@@ -313,6 +313,7 @@ public abstract class ObjectUtils {
 	 * @see java.util.Arrays#equals
 	 */
 	private static boolean arrayEquals(Object o1, Object o2) {
+	    // 这个代码说明，所有的引用类型数组都是Object[]的子类
 		if (o1 instanceof Object[] && o2 instanceof Object[]) {
 			return Arrays.equals((Object[]) o1, (Object[]) o2);
 		}

@@ -22,6 +22,15 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
 
 /**
+ * <p>
+ * BeanPostProcessor子接口。这个接口由三个方法：
+ * <ol>
+ * <li>postProcessBeforeInstantiation：在实例化之前调用，可不使用beanClass创建bean，返回任意对象</li>
+ * <li>postProcessAfterInstantiation：在实例化之后，任何{@code @Autowired}和{@code @Vale}注入之前调用</li>
+ * <li>postProcessPropertyValues：在BeanFactory将属性值应用到bean之前，调用，可以用于检测属性值是否有效</li>
+ * </ol>
+ * </p>
+ * 
  * Subinterface of {@link BeanPostProcessor} that adds a before-instantiation callback,
  * and a callback after instantiation but before explicit properties are set or
  * autowiring occurs.

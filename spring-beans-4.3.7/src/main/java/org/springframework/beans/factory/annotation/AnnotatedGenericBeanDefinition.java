@@ -42,6 +42,10 @@ import org.springframework.util.Assert;
 @SuppressWarnings("serial")
 public class AnnotatedGenericBeanDefinition extends GenericBeanDefinition implements AnnotatedBeanDefinition {
 
+	/**
+	 * 获得一个Class的元数据信息，底层使用StandardAnnotationMetadata(beanClass, true)构造。
+	 * 因此，嵌套的Annotation将会以{@code AnnotationAttributes}表示
+	 */
 	private final AnnotationMetadata metadata;
 
 	private MethodMetadata factoryMethodMetadata;
@@ -78,6 +82,10 @@ public class AnnotatedGenericBeanDefinition extends GenericBeanDefinition implem
 	}
 
 	/**
+	 * <p>
+	 * 这个方法应该是用于处理{@code Bean}标签，{@code 将工厂方法元数据存储在factoryMethodMetadata中}
+	 * </p>
+	 * 
 	 * Create a new AnnotatedGenericBeanDefinition for the given annotation metadata,
 	 * based on an annotated class and a factory method on that class.
 	 * @param metadata the annotation metadata for the bean class in question

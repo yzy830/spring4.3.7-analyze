@@ -17,6 +17,10 @@
 package org.springframework.core.type;
 
 /**
+ * <p>
+ * 抽象对一个Method的元数据访问，例如获得方法名、方法修饰符等
+ * </p>
+ * 
  * Interface that defines abstract access to the annotations of a specific
  * class, in a form that does not require that class to be loaded yet.
  *

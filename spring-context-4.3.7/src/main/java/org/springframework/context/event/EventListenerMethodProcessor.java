@@ -45,6 +45,11 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 /**
+ * <p>
+ * 这并非一个{code PostBeanProcessor}。他实现了{@link SmartInitializingSingleton}，用于将
+ * {@link EventListener @EventListener}标注的方法提取为单独的实例
+ * </p>
+ * 
  * Register {@link EventListener} annotated method as individual {@link ApplicationListener}
  * instances.
  *

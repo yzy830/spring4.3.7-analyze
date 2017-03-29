@@ -22,6 +22,11 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.core.AliasRegistry;
 
 /**
+ * <p>
+ * 注册{@code BeanDefinition}的抽象接口，被{@code GenericApplicationContext}、{@code DefaultListableBeanFactory}
+ * 实现
+ * </p>
+ * 
  * Interface for registries that hold bean definitions, for example RootBeanDefinition
  * and ChildBeanDefinition instances. Typically implemented by BeanFactories that
  * internally work with the AbstractBeanDefinition hierarchy.

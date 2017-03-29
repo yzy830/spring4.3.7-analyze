@@ -24,6 +24,15 @@ import java.util.List;
 import org.springframework.util.ObjectUtils;
 
 /**
+ * <p>
+ * {@code OrderComparator}的自然序定义如下
+ * <ol>
+ * <li>实现了{@link PriorityOrdered}接口的对象更小</li>
+ * <li>反之，使用{@link Ordered#getOrder()}的值决定大小</li>
+ * <li>如果么有实现Ordered，使用最低优先级(具有最大值)</li>
+ * </ol>
+ * </p>
+ * 
  * {@link Comparator} implementation for {@link Ordered} objects, sorting
  * by order value ascending, respectively by priority descending.
  *

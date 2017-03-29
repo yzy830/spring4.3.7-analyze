@@ -49,6 +49,11 @@ public class DefaultResourceLoader implements ResourceLoader {
 
 
 	/**
+	 * <p>
+	 * 使用默认规则选取classloader，用于后续的资源加载。默认选取规则是
+	 * context classloader -> current classloader -> system classloader(这一步应该走不到)
+	 * </p>
+	 * 
 	 * Create a new DefaultResourceLoader.
 	 * <p>ClassLoader access will happen using the thread context class loader
 	 * at the time of this ResourceLoader's initialization.

@@ -72,6 +72,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.util.StringValueResolver;
 
 /**
+ * <p>
+ * 用于处理JSR-250中的标签，最重要的是{@link PreDestroy PreDestroy}和{@link PostConstruct @PostConstrct}
+ * </p>
+ * 
  * {@link org.springframework.beans.factory.config.BeanPostProcessor} implementation
  * that supports common Java annotations out of the box, in particular the JSR-250
  * annotations in the {@code javax.annotation} package. These common Java

@@ -447,6 +447,14 @@ public abstract class ReflectionUtils {
 	}
 
 	/**
+	 * <p>
+	 * 这个方法没有去判断包是否匹配，认为只有当method和声明method的类均是public时，才没有必须要去设置accessible这个标志。
+	 * 默认情况下，这个标志为false，在{@code Method#invoke(Object, Object...)}时，会检查是否满足访问规则。
+	 * 设置为true，可以忽略访问规则检查。</br>
+	 * 受到SecurityManager的限制，直接调用{@code Method#setAccessible(boolean)}可能导致异常。因此这里先
+	 * 做了判断，减少冲突的可能性
+	 * </p>
+	 * 
 	 * Make the given method accessible, explicitly setting it accessible if
 	 * necessary. The {@code setAccessible(true)} method is only called
 	 * when actually necessary, to avoid unnecessary conflicts with a JVM

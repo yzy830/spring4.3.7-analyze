@@ -28,6 +28,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.event.DefaultEventListenerFactory;
@@ -127,6 +128,10 @@ public class AnnotationConfigUtils {
 
 
 	/**
+	 * <p>
+	 * 具体行为参考{@link registerAnnotationConfigProcessors}
+	 * </p>
+	 * 
 	 * Register all relevant annotation post processors in the given registry.
 	 * @param registry the registry to operate on
 	 */
@@ -135,6 +140,18 @@ public class AnnotationConfigUtils {
 	}
 
 	/**
+	 * <p>
+	 * 这是annotation配置中，一个非常重要的方法，这个方法将注册一些必须的BeanFactoryPostProcessor和BeanPostProcessor，包括
+	 * <ol>
+	 * <li>{@link ConfigurationClassPostProcessor}, 用于处理{@code @Configuration}配置，这是一个最重要的配置</li>
+	 * <li>{@link AutowiredAnnotationBeanPostProcessor}，用于处理{@code @Autowired}、{@code @Value}</li>
+	 * <li>{@link RequiredAnnotationBeanPostProcessor}，用于处理{@code @Required}</li>
+	 * <li>{@link CommonAnnotationBeanPostProcessor}，用于处理{@code @PreDesctroy}和{@code @PostConstruct}</li>
+	 * <li>{@link EventListenerMethodProcessor}，用于处理{@code @EventListener}标签</li>
+	 * <li>{@link DefaultEventListenerFactory}，用于将{@code @EventListener}标注的方法封装为ApplicationListener类</li>
+	 * </ol>
+	 * <p>
+	 * 
 	 * Register all relevant annotation post processors in the given registry.
 	 * @param registry the registry to operate on
 	 * @param source the configuration source element (already extracted)
@@ -157,18 +174,21 @@ public class AnnotationConfigUtils {
 
 		Set<BeanDefinitionHolder> beanDefs = new LinkedHashSet<BeanDefinitionHolder>(4);
 
+		// 注册ConfigurationClassPostProcessor(BeanDefinitionRegistryPostProcessor)，用于@Configuration标签
 		if (!registry.containsBeanDefinition(CONFIGURATION_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(ConfigurationClassPostProcessor.class);
 			def.setSource(source);
 			beanDefs.add(registerPostProcessor(registry, def, CONFIGURATION_ANNOTATION_PROCESSOR_BEAN_NAME));
 		}
 
+		// 注册AutowiredAnnotationBeanPostProcessor(BeanPostProcessor)，用于@Autowried等标签
 		if (!registry.containsBeanDefinition(AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(AutowiredAnnotationBeanPostProcessor.class);
 			def.setSource(source);
 			beanDefs.add(registerPostProcessor(registry, def, AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME));
 		}
 
+		// 注册RequiredAnnotationBeanPostProcessor(BeanPostProcessor)，处理@Required标签
 		if (!registry.containsBeanDefinition(REQUIRED_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(RequiredAnnotationBeanPostProcessor.class);
 			def.setSource(source);
@@ -176,6 +196,7 @@ public class AnnotationConfigUtils {
 		}
 
 		// Check for JSR-250 support, and if present add the CommonAnnotationBeanPostProcessor.
+		// 注册CommonAnnotationBeanPostProcessor(BeanPostProcessor)，用于处理@PreDestory/@PostConstruct标签
 		if (jsr250Present && !registry.containsBeanDefinition(COMMON_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(CommonAnnotationBeanPostProcessor.class);
 			def.setSource(source);
@@ -197,11 +218,13 @@ public class AnnotationConfigUtils {
 			beanDefs.add(registerPostProcessor(registry, def, PERSISTENCE_ANNOTATION_PROCESSOR_BEAN_NAME));
 		}
 
+		// 注册EventListenerMethodProcessor，处理@EventListener标注的方法。是一个SmartInitializingSingleton接口
 		if (!registry.containsBeanDefinition(EVENT_LISTENER_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(EventListenerMethodProcessor.class);
 			def.setSource(source);
 			beanDefs.add(registerPostProcessor(registry, def, EVENT_LISTENER_PROCESSOR_BEAN_NAME));
 		}
+		// 注册DefaultEventListenerFactory，用于将@EventListener标注的方法包装为ApplicationListener
 		if (!registry.containsBeanDefinition(EVENT_LISTENER_FACTORY_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(DefaultEventListenerFactory.class);
 			def.setSource(source);
@@ -231,6 +254,12 @@ public class AnnotationConfigUtils {
 		}
 	}
 
+	/**
+	 * 用于处理一些通用的bean属性，包括{@link Lazy @Lazy}、{@link Primary @Primary}、
+	 * {@link DependsOn @DependsOn}、{@link Role @Role}、{@link Description @Description}
+	 * 
+	 * @param abd
+	 */
 	public static void processCommonDefinitionAnnotations(AnnotatedBeanDefinition abd) {
 		processCommonDefinitionAnnotations(abd, abd.getMetadata());
 	}
@@ -252,15 +281,25 @@ public class AnnotationConfigUtils {
 
 		if (abd instanceof AbstractBeanDefinition) {
 			AbstractBeanDefinition absBd = (AbstractBeanDefinition) abd;
+			// 设置一个Bean的作用，例如BeanDefinition.ROLE_APPLICATION，很少用。可能对框架扩展有用
 			if (metadata.isAnnotated(Role.class.getName())) {
 				absBd.setRole(attributesFor(metadata, Role.class).getNumber("value").intValue());
 			}
+			// 用于给bean写一段描述，没有实际作用
 			if (metadata.isAnnotated(Description.class.getName())) {
 				absBd.setDescription(attributesFor(metadata, Description.class).getString("value"));
 			}
 		}
 	}
 
+	/**
+	 * 处理scoped proxy mode。如果是{@code ScopedProxyMode#NO}，则不会做任何处理
+	 * 
+	 * @param metadata
+	 * @param definition
+	 * @param registry
+	 * @return
+	 */
 	static BeanDefinitionHolder applyScopedProxyMode(
 			ScopeMetadata metadata, BeanDefinitionHolder definition, BeanDefinitionRegistry registry) {
 

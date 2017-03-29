@@ -26,6 +26,12 @@ import org.springframework.core.DecoratingProxy;
 import org.springframework.core.OrderComparator;
 
 /**
+ * <p>
+ * {@code AnnotationAwareOrderComparator}用于处理{@code Order}标签和
+ * {@code Ordered}接口，以确定优先级。在PostBeanProcessor、PostFactoryBeanProcessor、
+ * AOP中均需要处理
+ * </p>
+ * 
  * {@code AnnotationAwareOrderComparator} is an extension of
  * {@link OrderComparator} that supports Spring's
  * {@link org.springframework.core.Ordered} interface as well as the

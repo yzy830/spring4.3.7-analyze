@@ -30,6 +30,10 @@ import org.springframework.core.env.StandardEnvironment;
 import org.springframework.util.Assert;
 
 /**
+ * <p>
+ * 这个类用于解析一个Annotated bean的配置。
+ * </p>
+ * 
  * Convenient adapter for programmatic registration of annotated bean classes.
  * This is an alternative to {@link ClassPathBeanDefinitionScanner}, applying
  * the same resolution of annotations but for explicitly registered classes only.
@@ -188,6 +192,7 @@ public class AnnotatedBeanDefinitionReader {
 		}
 
 		BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(abd, beanName);
+		// TODO:yang830，暂时不考虑proxy mode
 		definitionHolder = AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
 		BeanDefinitionReaderUtils.registerBeanDefinition(definitionHolder, this.registry);
 	}

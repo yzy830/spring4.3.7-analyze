@@ -17,6 +17,12 @@
 package org.springframework.beans.factory;
 
 /**
+ * <p>
+ * 在{@link BeanFactory}启动的singleton pre-instantiation阶段结束之后回调。eager initializing
+ * 的singleton，可以实现这个接口，在pre-instantiation阶段完成之后做一些处理。这个接口的回调先于{@link InitializingBean}
+ * 发送(将等到local construction phase之后)
+ * </p>
+ * 
  * Callback interface triggered at the end of the singleton pre-instantiation phase
  * during {@link BeanFactory} bootstrap. This interface can be implemented by
  * singleton beans in order to perform some initialization after the regular

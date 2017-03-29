@@ -188,6 +188,10 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 
 	/**
+	 * <p>
+	 * 使用默认参数构造{@code AbstractBeanDefinition}，方法参数和属性参数都是null
+	 * </p>
+	 * 
 	 * Create a new AbstractBeanDefinition with default settings.
 	 */
 	protected AbstractBeanDefinition() {

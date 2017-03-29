@@ -34,6 +34,13 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.util.StringValueResolver;
 
 /**
+ * <p>
+ * {@code ApplicationContextAwareProcessor}是一个{@code BeanPostProcessor}，用于给
+ * 实现了{@link EnvironmentAware}, {@link EmbeddedValueResolverAware},
+ * {@link ResourceLoaderAware}, {@link ApplicationEventPublisherAware},
+ * {@link MessageSourceAware} and/or {@link ApplicationContextAware}这些接口的Bean注入Context
+ * </p>
+ * 
  * {@link org.springframework.beans.factory.config.BeanPostProcessor}
  * implementation that passes the ApplicationContext to beans that
  * implement the {@link EnvironmentAware}, {@link EmbeddedValueResolverAware},

@@ -21,15 +21,27 @@ import java.lang.reflect.Method;
 
 import org.springframework.aop.TargetSource;
 import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.QualifierAnnotationAutowireCandidateResolver;
 import org.springframework.beans.factory.config.DependencyDescriptor;
+import org.springframework.beans.factory.support.AutowireCandidateResolver;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.support.GenericTypeAwareAutowireCandidateResolver;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 
 /**
+ * <p>
+ * {@code ContextAnnotationAutowireCandidateResolver}的集成体系如下, 
+ * AutowireCandidateResolver, 
+ * BeanFactoryAware 
+ *      <- GenericTypeAwareAutowireCandidateResolver(类型注入，支持泛型)
+ *              <- QualifierAnnotationAutowireCandidateResolver(支持{@code Qualifier}和{@code value}标签)
+ *                      <- ContextAnnotationAutowireCandidateResolver(支持{@code Lazy}标签)
+ * </p>
+ * 
  * Complete implementation of the
  * {@link org.springframework.beans.factory.support.AutowireCandidateResolver} strategy
  * interface, providing support for qualifier annotations as well as for lazy resolution

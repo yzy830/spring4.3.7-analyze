@@ -34,6 +34,11 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.util.Assert;
 
 /**
+ * <p>
+ * 通用的ApplicationContext，不假设bean definition的格式，因此，可同时用于Annotation配置和XML配置。</br></br>
+ * 默认使用{@code DefaultListableBeanFactory}
+ * </p>
+ * 
  * Generic ApplicationContext implementation that holds a single internal
  * {@link org.springframework.beans.factory.support.DefaultListableBeanFactory}
  * instance and does not assume a specific bean definition format. Implements

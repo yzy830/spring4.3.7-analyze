@@ -66,6 +66,10 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
+ * <p>
+ * 一个BeanPostProcessor，用于处理{@link Autowired @Autowired}和{@link Value @Value}标签
+ * </p>
+ * 
  * {@link org.springframework.beans.factory.config.BeanPostProcessor} implementation
  * that autowires annotated fields, setter methods and arbitrary config methods.
  * Such members to be injected are detected through a Java 5 annotation: by default,

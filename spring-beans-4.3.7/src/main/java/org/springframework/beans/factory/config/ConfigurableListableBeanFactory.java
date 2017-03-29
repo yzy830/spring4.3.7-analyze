@@ -148,6 +148,11 @@ public interface ConfigurableListableBeanFactory
 	boolean isConfigurationFrozen();
 
 	/**
+	 * <p>
+	 * 实例化所有non-lazy-init singletons。然后遍历创建的singletons，选择其中实现了SmartInitializingSingleton接口的bean，
+	 * 执行相关方法，例如EventListenerMethodProcessor会在此刻为标注了{@code @EventListener}的创建代理并注册到ApplicationContext中
+	 * </p>
+	 * 
 	 * Ensure that all non-lazy-init singletons are instantiated, also considering
 	 * {@link org.springframework.beans.factory.FactoryBean FactoryBeans}.
 	 * Typically invoked at the end of factory setup, if desired.

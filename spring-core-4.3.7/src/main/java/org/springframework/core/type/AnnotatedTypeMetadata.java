@@ -21,6 +21,10 @@ import java.util.Map;
 import org.springframework.util.MultiValueMap;
 
 /**
+ * <p>
+ * 表示一个具有Annotation的类或者方法的元数据信息，用于判断一个Annotation是否存在以及获取该Annotation的属性信息
+ * </p>
+ * 
  * Defines access to the annotations of a specific type ({@link AnnotationMetadata class}
  * or {@link MethodMetadata method}), in a form that does not necessarily require the
  * class-loading.

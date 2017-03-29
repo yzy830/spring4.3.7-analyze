@@ -187,6 +187,7 @@ public class AnnotatedElementUtils {
 			searchWithGetSemantics(composed.annotationType(), null, null, null, new SimpleAnnotationProcessor<Object>(true) {
 					@Override
 					public Object process(AnnotatedElement annotatedElement, Annotation annotation, int metaDepth) {
+					    // 这里没有限制层次，因此会处理所有的元数据标签，直到没有更底层的元数据标签
 						types.add(annotation.annotationType().getName());
 						return CONTINUE;
 					}
@@ -909,6 +910,21 @@ public class AnnotatedElementUtils {
 	}
 
 	/**
+	 * <p>
+	 * 使用指定的Processor，处理一个{@code AnnotatedElement}中包含的指定元数据标签(由annotationType、annotationName或者containerType(repeatable的情况)指定)。
+	 * 如果没有指定(设置为null的情况)，则由{@code Processor#alwaysProcesses()}确定是否处理。如果processor执行之后，返回null，则表示还需要继续处理后续的匹配标签，如果
+	 * 返回non-null的值，则表示不必在处理后续的标签</br></br>
+	 * 
+	 * 这里visited元素用以确定一个AnnotatedElement是否已经处理了。visited可以保证，一个标签或者元数据标签，在层次结构(继承结构或者元数据标注的结构)中最后一层出现的有效。</br></br>
+	 * 
+	 * metaDepth表示元数据处理的层次。 一个annotation A标注了非annotation，则metaDepth-A = 0；annotation B标注了annotation A，则metaDepth-B = 1，以此类推。</br></br>
+	 * 
+	 * 如果AnnotatedElement是一个Class，那么在处理完当前这个Class(使用{@code AnnotatedElement#getDeclaredAnnotations()})之后，会进一步处理从父类继承而来的
+	 * annotation(使用{@code AnnotatedElement#getAnnotations()}) </br></br>
+	 * 
+	 * 对输入的AnnotatedElement，除了处理器present annotation以外，还会处理present annotation的meta annotation，一直递归，知道没有更底层的元数据标签。
+	 * </p>
+	 * 
 	 * Perform the search algorithm for the {@link #searchWithGetSemantics}
 	 * method, avoiding endless recursion by tracking which annotated elements
 	 * have already been <em>visited</em>.
@@ -934,6 +950,10 @@ public class AnnotatedElementUtils {
 		if (visited.add(element)) {
 			try {
 				// Start searching within locally declared annotations
+			    /*
+			     * 使用getDeclaredAnnotations，只处理direct present annotation(包括container annotations)，
+			     * 后面再单独处理从父类继承来的annotation，确保子类的配置优先
+			     * */ 
 				List<Annotation> declaredAnnotations = Arrays.asList(element.getDeclaredAnnotations());
 				T result = searchWithGetSemanticsInAnnotations(element, declaredAnnotations,
 						annotationType, annotationName, containerType, processor, visited, metaDepth);
@@ -944,6 +964,7 @@ public class AnnotatedElementUtils {
 				if (element instanceof Class) { // otherwise getAnnotations doesn't return anything new
 					List<Annotation> inheritedAnnotations = new ArrayList<Annotation>();
 					for (Annotation annotation : element.getAnnotations()) {
+					    // 排除子类已经处理的annotaion，确保子类的配置优先
 						if (!declaredAnnotations.contains(annotation)) {
 							inheritedAnnotations.add(annotation);
 						}
@@ -994,6 +1015,7 @@ public class AnnotatedElementUtils {
 
 		// Search in annotations
 		for (Annotation annotation : annotations) {
+		    // 不处理java.lang.annotation中定义的meta-annotations
 			if (!AnnotationUtils.isInJavaLangAnnotationPackage(annotation)) {
 				if (annotation.annotationType() == annotationType ||
 						annotation.annotationType().getName().equals(annotationName) ||
@@ -1025,6 +1047,7 @@ public class AnnotatedElementUtils {
 		// Recursively search in meta-annotations
 		for (Annotation annotation : annotations) {
 			if (!AnnotationUtils.isInJavaLangAnnotationPackage(annotation)) {
+			    // 处理元数据标签
 				T result = searchWithGetSemantics(annotation.annotationType(), annotationType,
 						annotationName, containerType, processor, visited, metaDepth + 1);
 				if (result != null) {

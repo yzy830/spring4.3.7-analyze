@@ -38,6 +38,10 @@ import org.springframework.util.MultiValueMap;
  */
 public class StandardAnnotationMetadata extends StandardClassMetadata implements AnnotationMetadata {
 
+	/**
+	 * 使用{@code Class#getAnnotations()}得到，因此这个数组包含了指定类的present annotations,
+	 * 即direct present annotations和从父类继承过来的direct present annotations(这些annotation需要使用{@code Inherited}标记)
+	 */
 	private final Annotation[] annotations;
 
 	private final boolean nestedAnnotationsAsMap;
@@ -65,7 +69,12 @@ public class StandardAnnotationMetadata extends StandardClassMetadata implements
 	 */
 	public StandardAnnotationMetadata(Class<?> introspectedClass, boolean nestedAnnotationsAsMap) {
 		super(introspectedClass);
+		/* 
+		 * 这里使用了getAnnotation，因此annotations只保存了direct annotaion和从父类集成过来的direct annotation，而不
+		 * 包含indirect annotation(repeatable annotation)
+		 * */
 		this.annotations = introspectedClass.getAnnotations();
+		// 是否将nested annotation的配置表示为AnnotationAttributes(本质上市key-value map)
 		this.nestedAnnotationsAsMap = nestedAnnotationsAsMap;
 	}
 

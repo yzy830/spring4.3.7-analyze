@@ -22,6 +22,10 @@ import java.util.LinkedHashSet;
 import org.springframework.util.Assert;
 
 /**
+ * <p>
+ *  使用{@code Class}的标准API接口实现{@code ClassMeta}，以获得类的基本元数据信息，例如类的名称、父类的名称
+ * </p>
+ * 
  * {@link ClassMetadata} implementation that uses standard reflection
  * to introspect a given {@code Class}.
  *
@@ -82,6 +86,12 @@ public class StandardClassMetadata implements ClassMetadata {
 
 	@Override
 	public boolean isIndependent() {
+	    /*
+	     * 这里对独立的定义是这样的：
+	     * (1) 没有enclosing class，说明这个一定顶级类，一定是独立的
+	     * (2) 如果有外围类而declaring class是null，那么这个类一定是一个方法类或者匿名类，则一定不独立
+	     * (3) 如果declaring class不是null，并且这个类是static的，则这个类是独立的
+	     * */
 		return (!hasEnclosingClass() ||
 				(this.introspectedClass.getDeclaringClass() != null &&
 						Modifier.isStatic(this.introspectedClass.getModifiers())));

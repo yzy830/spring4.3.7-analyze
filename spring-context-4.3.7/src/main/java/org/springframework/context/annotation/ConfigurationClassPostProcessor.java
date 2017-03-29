@@ -67,6 +67,13 @@ import org.springframework.util.ClassUtils;
 import static org.springframework.context.annotation.AnnotationConfigUtils.*;
 
 /**
+ * <p>
+ * 用于处理{@link Configuration @Configuration}的{@code BeanFactoryPostProcessor}。在使用基于
+ * 标签的配置时，会默认注册。</br></br>
+ * 
+ * 这个post-processor实现了PriorityOrdered，将先于其他(没有实现这个接口的)post-processor处理
+ * </p>
+ * 
  * {@link BeanFactoryPostProcessor} used for bootstrapping processing of
  * {@link Configuration @Configuration} classes.
  *

@@ -17,6 +17,11 @@
 package org.springframework.core;
 
 /**
+ * <p>
+ * 这个接口继承于{@link Ordered}接口，实现{@code PriorityOrdered}的接口，将优先于其他的
+ * post-processor处理，
+ * </p>
+ * 
  * Extension of the {@link Ordered} interface, expressing a <em>priority</em>
  * ordering: order values expressed by {@code PriorityOrdered} objects
  * always apply before same order values expressed by <em>plain</em>

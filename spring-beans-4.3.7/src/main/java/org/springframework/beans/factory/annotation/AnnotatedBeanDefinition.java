@@ -33,6 +33,11 @@ import org.springframework.core.type.MethodMetadata;
 public interface AnnotatedBeanDefinition extends BeanDefinition {
 
 	/**
+	 * <p>
+	 * 获得Bean元数据的访问接口，底层使用{@code StandardAnnotationMetadata}实现，可以获得
+	 * Class的基本信息和annotation信息
+	 * </p>
+	 * 
 	 * Obtain the annotation metadata (as well as basic class metadata)
 	 * for this bean definition's bean class.
 	 * @return the annotation metadata object (never {@code null})
@@ -40,6 +45,10 @@ public interface AnnotatedBeanDefinition extends BeanDefinition {
 	AnnotationMetadata getMetadata();
 
 	/**
+	 * <p>
+	 * 这个接口应该是用于获得{@code Bean}标签的工厂方法元数据
+	 * </p>
+	 * 
 	 * Obtain metadata for this bean definition's factory method, if any.
 	 * @return the factory method metadata, or {@code null} if none
 	 * @since 4.1.1
