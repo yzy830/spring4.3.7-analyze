@@ -30,6 +30,22 @@ import org.springframework.core.ResolvableType;
 import org.springframework.util.Assert;
 
 /**
+ * <pre>
+ * {@link AbstractBeanDefinition}
+ *      <- {@code RootBeanDefinition}
+ * </pre>
+ * 
+ * <p>
+ * 表示一个完成合并的BeanDefinition，表示一个特定的Bean。</br></br>
+ * 一个{@code RootBeanDefinition}可能来自一个{@code GenericBeanDefinition}，
+ * 也可能来自多个相互继承的{@code GenericBeanDefinition}
+ * </p>
+ * 
+ * <p>
+ * {@code RootBeanDefinition}涉及到一个Bean如何创建和构造，他需要与{@link DefaultListableBeanFactory}等配合使用，
+ * 配合一起使用。这些类在一个package里面，耦合比较紧
+ * </p>
+ * 
  * A root bean definition represents the merged bean definition that backs
  * a specific bean in a Spring BeanFactory at runtime. It might have been created
  * from multiple original bean definitions that inherit from each other,
@@ -56,6 +72,9 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 
 	boolean allowCaching = true;
 
+	/**
+	 * 标记工厂方法是否被重载过
+	 */
 	boolean isFactoryMethodUnique = false;
 
 	volatile ResolvableType targetType;
@@ -90,10 +109,19 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 	/** Package-visible field that indicates a before-instantiation post-processor having kicked in */
 	volatile Boolean beforeInstantiationResolved;
 
+	/**
+     * 外部管理配置的属性，作用？
+     */
 	private Set<Member> externallyManagedConfigMembers;
 
+	/**
+	 * 外部管理的初始化方法，应该是由{@link org.springframework.context.annotation.Bean @Bean}配置的init方法？
+	 */
 	private Set<String> externallyManagedInitMethods;
 
+	/**
+     * 外部管理的销毁方法，应该是由{@link org.springframework.context.annotation.Bean @Bean}配置的init方法？
+     */
 	private Set<String> externallyManagedDestroyMethods;
 
 
@@ -195,11 +223,17 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 	}
 
 
+	/**
+	 * {@code RootBeanDefinition}没有parent，返回null
+	 * */
 	@Override
 	public String getParentName() {
 		return null;
 	}
 
+	/**
+     * {@code RootBeanDefinition}没有parent，抛出异常
+     * */
 	@Override
 	public void setParentName(String parentName) {
 		if (parentName != null) {
@@ -208,6 +242,10 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 	}
 
 	/**
+	 * <p>
+	 * 被装饰的bean definition
+	 * </p>
+	 * 
 	 * Register a target definition that is being decorated by this bean definition.
 	 */
 	public void setDecoratedDefinition(BeanDefinitionHolder decoratedDefinition) {
@@ -215,6 +253,10 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 	}
 
 	/**
+	 * <p>
+     * 被装饰的bean definition
+     * </p>
+	 * 
 	 * Return the target definition that is being decorated by this bean definition, if any.
 	 */
 	public BeanDefinitionHolder getDecoratedDefinition() {
@@ -222,6 +264,10 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 	}
 
 	/**
+	 * <p>
+	 * 这个字段什么作用？
+	 * </p>
+	 * 
 	 * Specify the {@link AnnotatedElement} defining qualifiers,
 	 * to be used instead of the target class or factory method.
 	 * @since 4.3.3
@@ -233,6 +279,10 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 	}
 
 	/**
+	 * <p>
+     * 这个字段什么作用？
+     * </p>
+	 * 
 	 * Return the {@link AnnotatedElement} defining qualifiers, if any.
 	 * Otherwise, the factory method and target class will be checked.
 	 * @since 4.3.3
@@ -242,6 +292,10 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 	}
 
 	/**
+	 * <p>
+	 * 记录包含泛型参数的目标类型
+	 * </p>
+	 * 
 	 * Specify a generics-containing target type of this bean definition, if known in advance.
 	 * @since 4.3.3
 	 */
@@ -250,6 +304,10 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 	}
 
 	/**
+	 * <p>
+     * 直接记录目标类型
+     * </p>
+	 * 
 	 * Specify the target type of this bean definition, if known in advance.
 	 * @since 3.2.2
 	 */
@@ -258,6 +316,10 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 	}
 
 	/**
+	 * <p>
+	 * 获得目标类型。经过了泛型解析
+	 * </p>
+	 * 
 	 * Return the target type of this bean definition, if known
 	 * (either specified in advance or resolved on first instantiation).
 	 * @since 3.2.2
@@ -270,6 +332,10 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 	}
 
 	/**
+	 * <p>
+	 * 指定工厂方法名称。使用这个方法指定时，认为工厂方法没有重载，会标记{@link isFactoryMethodUnique}为true
+	 * </p>
+	 * 
 	 * Specify a factory method name that refers to a non-overloaded method.
 	 */
 	public void setUniqueFactoryMethodName(String name) {
@@ -286,6 +352,8 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 	}
 
 	/**
+	 * 获得解析得到的构造器或者工厂方法。这个方法将与BeanFactory配合使用，待分析
+	 * 
 	 * Return the resolved factory method as a Java Method object, if available.
 	 * @return the factory method, or {@code null} if not found or not resolved yet
 	 */

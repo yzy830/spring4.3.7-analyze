@@ -23,6 +23,10 @@ import java.util.Map;
 import org.springframework.util.Assert;
 
 /**
+ * <p>
+ * AttributeAsscessor的简单实现，内部使用Map<String, Object>来存储属性值
+ * </p>
+ * 
  * Support class for {@link AttributeAccessor AttributeAccessors}, providing
  * a base implementation of all methods. To be extended by subclasses.
  *

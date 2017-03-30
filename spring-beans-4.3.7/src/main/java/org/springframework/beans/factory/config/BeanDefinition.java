@@ -21,6 +21,36 @@ import org.springframework.beans.MutablePropertyValues;
 import org.springframework.core.AttributeAccessor;
 
 /**
+ * <pre>
+ * {@link AttributeAccessor}
+ * {@link BeanMetadataElement}
+ *      <- {@code BeanDefinition}
+ * </pre>
+ * 
+ * <p>
+ * 定义Bean Definition的抽象接口。一个Bean Definition具有如下属性：
+ * <ol>
+ * <li>parentName：父Bean Definition的名称，在postprocess期间可能修改。为什么？</li>
+ * <li>beanClassName：这个bean definition对应的Class的名称，在postprocess期间可能修改。为什么？</li>
+ * <li>scope：作用域</li>
+ * <li>lazyInit：是否懒加载</li>
+ * <li>dependsOn：依赖的bean</li>
+ * <li>isAutowireCandidate：是否作为autowire的候选，影响{@link Autowired @Autowired}</li>
+ * <li>isPrimary：是否作为autowire的主bean</li>
+ * <li>factoryBeanName：创建这个bean的工厂类</li>
+ * <li>factoryMethodName：工厂方法名称，这个方法将使用constructorArgumentValues提供的参数(可能没有参数)</li>
+ * <li>constructorArgumentValues: {@link ConstructorArgumentValues}类型，保存创建这个bean的构造器参数，可在post processor中修改</li>
+ * <li>propertyValues：{@link MutablePropertyValues}类型，注入给bean的属性，在postprocessor期间，可能修改</li>
+ * <li>isSingleton：是否单例</li>
+ * <li>isPrototype：是否是prototype</li>
+ * <li>isAbstract：这个bean definition是否表示一个抽象的definition，不实例化(一般用于标注一个纯粹的父bean definition)</li>
+ * <li>getRole：bean的角色，有三种{@link #ROLE_APPLICATION}、{@link #ROLE_SUPPORT}、{@link #ROLE_INFRASTRUCTURE}</li>
+ * <li>description: bean的描述，用于注释和调试，不具有功能性作用</li>
+ * <li>resourceDescription：描述bean definition的配置来源，用于调试</li>
+ * <li>originatingBeanDefinition：bean definition允许装饰，这个属性表示当前对象装饰的直接目标对象</li>
+ * </ol>
+ * </p>
+ * 
  * A BeanDefinition describes a bean instance, which has property values,
  * constructor argument values, and further information supplied by
  * concrete implementations.

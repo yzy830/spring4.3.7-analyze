@@ -17,6 +17,10 @@
 package org.springframework.beans;
 
 /**
+ * <p>
+ * 基础组建，获得配置源
+ * </p>
+ * 
  * Interface to be implemented by bean metadata elements
  * that carry a configuration source object.
  *

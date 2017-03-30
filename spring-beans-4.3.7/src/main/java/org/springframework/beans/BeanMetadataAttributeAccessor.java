@@ -19,6 +19,16 @@ package org.springframework.beans;
 import org.springframework.core.AttributeAccessorSupport;
 
 /**
+ * <pre>
+ * {@link AttributeAccessorSupport}
+ * {@link BeanMetadataElement}
+ *      <- {@code BeanMetadataAttributeAccessor}
+ * </pre>
+ * 
+ * <p>
+ * {@code BeanMetadataAttributeAccessor}在{@link AttributeAccessorSupport}基础上值添加了一个配置源
+ * </p>
+ * 
  * Extension of {@link org.springframework.core.AttributeAccessorSupport},
  * holding attributes as {@link BeanMetadataAttribute} objects in order
  * to keep track of the definition source.

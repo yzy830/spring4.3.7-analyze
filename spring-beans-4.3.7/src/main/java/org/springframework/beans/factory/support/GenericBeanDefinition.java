@@ -19,6 +19,20 @@ package org.springframework.beans.factory.support;
 import org.springframework.beans.factory.config.BeanDefinition;
 
 /**
+ * <pre>
+ * {@link AbstractBeanDefinition}
+ *      <- {@code GenericBeanDefinition}
+ * </pre>
+ * 
+ * <p>
+ * 通用的Bean Definition表达式。可以使用parentName属性，动态指定父子关系。通常情况下，应该使用这个类注册用户可见的
+ * bean definition。只有在父子关系预先确定的时候，才使用{@code RootBeanDefinition}、{@code ChildBeanDefinition}。
+ * </p>
+ * 
+ * <p>
+ * 这个类仅仅是在AbstractBeanDefinition实现了parentName的动态修改
+ * </p>
+ * 
  * GenericBeanDefinition is a one-stop shop for standard bean definition purposes.
  * Like any bean definition, it allows for specifying a class plus optionally
  * constructor argument values and property values. Additionally, deriving from a
@@ -74,6 +88,11 @@ public class GenericBeanDefinition extends AbstractBeanDefinition {
 	}
 
 
+	/**
+	 * <p>
+	 * 直接使用了{@link AbstratBeanDefinition}提供的复制构造器执行clone
+	 * </p>
+	 * */
 	@Override
 	public AbstractBeanDefinition cloneBeanDefinition() {
 		return new GenericBeanDefinition(this);

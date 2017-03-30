@@ -22,6 +22,10 @@ import java.net.URI;
 import java.net.URL;
 
 /**
+ * <p>
+ * 资源的抽象接口，底层可以对应一个file或者一个class path resource
+ * </p>
+ * 
  * Interface for a resource descriptor that abstracts from the actual
  * type of underlying resource, such as a file or class path resource.
  *

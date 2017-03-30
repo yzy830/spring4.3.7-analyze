@@ -17,6 +17,10 @@
 package org.springframework.core;
 
 /**
+ * <p>
+ * 访问任意对象属性的抽象接口
+ * </p>
+ * 
  * Interface defining a generic contract for attaching and accessing metadata
  * to/from arbitrary objects.
  *
@@ -26,6 +30,10 @@ package org.springframework.core;
 public interface AttributeAccessor {
 
 	/**
+	 * <p>
+	 * 设置属性值，如果<code>value = null</code>，则移除该属性
+	 * </p>
+	 * 
 	 * Set the attribute defined by {@code name} to the supplied	{@code value}.
 	 * If {@code value} is {@code null}, the attribute is {@link #removeAttribute removed}.
 	 * <p>In general, users should take care to prevent overlaps with other
@@ -60,6 +68,10 @@ public interface AttributeAccessor {
 	boolean hasAttribute(String name);
 
 	/**
+	 * <p>
+	 * 返回所有设置的属性名称
+	 * </p>
+	 * 
 	 * Return the names of all attributes.
 	 */
 	String[] attributeNames();

@@ -23,6 +23,16 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
 /**
+ * <pre>
+ * {@link BeanMetadataElement}
+ *      <- MethodOverride
+ * </pre>
+ * 
+ * <p>
+ * 方法重写的抽象类。描述了一个在创建bean时，需要重写的方法。这各类并不描述如何重写这个方法，具体的如果重写，由
+ * 子类描述，例如{@link LookupOverride}、{@link ReplaceOverride}
+ * </p>
+ * 
  * Object representing the override of a method on a managed object by the IoC
  * container.
  *

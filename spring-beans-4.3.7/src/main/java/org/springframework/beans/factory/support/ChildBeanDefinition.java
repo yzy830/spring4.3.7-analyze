@@ -21,6 +21,20 @@ import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.util.ObjectUtils;
 
 /**
+ * <pre>
+ * {@link AbstractBeanDefinition}
+ *      <- {@code ChildBeanDefinition}
+ * </pre>
+ * 
+ * <p>
+ * 表示一个需要继承其他Bean Definition的Bean Definition
+ * </p>
+ * 
+ * <p>
+ * {@code ChildBeanDefinition}与{@link GenericBeanDefinition}的主要区别是：
+ * {@code ChildBeanDefinition}必须具有一个parent，否则{@link #validate()}方法会执行失败
+ * </p>
+ * 
  * Bean definition for beans which inherit settings from their parent.
  * Child bean definitions have a fixed dependency on a parent bean definition.
  *

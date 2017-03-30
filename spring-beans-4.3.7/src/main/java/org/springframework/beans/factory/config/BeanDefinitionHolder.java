@@ -23,6 +23,11 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 /**
+ * <p>
+ * 包装了一个BeanDefinition以及其名称和别名(例如使用{@code org.springframework.context.annotation.Bean @Bean}配置)。</br>
+ * 在BeanDefinition中没有记录别名，需要在这里记录
+ * </p>
+ * 
  * Holder for a BeanDefinition with name and aliases.
  * Can be registered as a placeholder for an inner bean.
  *
