@@ -277,6 +277,8 @@ public abstract class ObjectUtils {
 	//---------------------------------------------------------------------
 
 	/**
+	 * <p>比较两个对象是否相等，可以处理null和array</p>
+	 * 
 	 * Determine if the given objects are equal, returning {@code true} if
 	 * both are {@code null} or {@code false} if only one is {@code null}.
 	 * <p>Compares arrays with {@code Arrays.equals}, performing an equality

@@ -59,6 +59,9 @@ abstract class SerializableTypeWrapper {
 	private static final Class<?>[] SUPPORTED_SERIALIZABLE_TYPES = {
 			GenericArrayType.class, ParameterizedType.class, TypeVariable.class, WildcardType.class};
 
+	/**
+	 * 从不可串行化Type到串行化代理之间的映射缓存。缓存代理均实现了{@link SerializableTypeProxy}接口
+	 * */
 	private static final ConcurrentReferenceHashMap<Type, Type> cache =
 			new ConcurrentReferenceHashMap<Type, Type>(256);
 
@@ -80,6 +83,10 @@ abstract class SerializableTypeWrapper {
 	}
 
 	/**
+	 * <p>
+	 * 一个简单的封装，给generic superclass的返回值创建代理
+	 * </p>
+	 * 
 	 * Return a {@link Serializable} variant of {@link Class#getGenericSuperclass()}.
 	 */
 	@SuppressWarnings("serial")
@@ -111,6 +118,10 @@ abstract class SerializableTypeWrapper {
 	}
 
 	/**
+	 * <p>
+	 * 返回一个类型的TypeVariable序列，如果Class不是泛型类型，则得到一个空数组
+	 * </p>
+	 * 
 	 * Return a {@link Serializable} variant of {@link Class#getTypeParameters()}.
 	 */
 	@SuppressWarnings("serial")
@@ -129,6 +140,10 @@ abstract class SerializableTypeWrapper {
 	}
 
 	/**
+	 * <p>
+	 * 解析Type。不可串行化的Type实现会被生成代理，并实现SerializableTypeProxy，因此，这里做了一个循环拆箱的操作
+	 * </p>
+	 * 
 	 * Unwrap the given type, effectively returning the original non-serializable type.
 	 * @param type the type to unwrap
 	 * @return the original non-serializable type
@@ -143,6 +158,19 @@ abstract class SerializableTypeWrapper {
 	}
 
 	/**
+	 * <p>
+	 * 给不可实例化的底层Type，创建持久化代理<br/><br/>
+	 * 
+	 * 在java中Class类是支持串行化的，但是{@link GenericArrayType}等接口没有继承{@link Serializable}，因此其实现是否可串行化是不确定的
+	 * (例如，Hibernate中的GenericArrayType就不可串行化)。这里为每种具体的Type创建一个代理，统一实现持久化。<br/><br/>
+	 * 
+	 * 代理会持有{@link TypeProxyInvocationHandler}，{@code TypeProxyInvocationHandler}只有一个成员{@link TypeProvider}。
+	 * {@link TypeProvider}继承了{@link Serializable}，因此必然是可以持久化的。<br/><br/>
+	 * 
+	 * {@code TypeProvider}的实现值得参考。例如{@link MethodInvokeTypeProvider}为了处理不可串行化的{@link Method}成员，
+	 * 定制了反序列化流程(readObject)，通过可持久化的Class和MethodName，在反序列化过程中，获得Method对象
+	 * </p>
+	 * 
 	 * Return a {@link Serializable} {@link Type} backed by a {@link TypeProvider} .
 	 */
 	static Type forTypeProvider(final TypeProvider provider) {
@@ -181,6 +209,8 @@ abstract class SerializableTypeWrapper {
 
 
 	/**
+	 * <p>提供Type对象</p>
+	 * 
 	 * A {@link Serializable} interface providing access to a {@link Type}.
 	 */
 	interface TypeProvider extends Serializable {
@@ -211,6 +241,11 @@ abstract class SerializableTypeWrapper {
 
 
 	/**
+	 * <p>
+	 * 这个代理实现，拦截了{@link java.lang.reflect.ParameterizedType#getRawType()}等方法，使得所有返回的Type
+	 * 均可以串行化
+	 * </p>
+	 * 
 	 * {@link Serializable} {@link InvocationHandler} used by the proxied {@link Type}.
 	 * Provides serialization support and enhances any methods that return {@code Type}
 	 * or {@code Type[]}.
