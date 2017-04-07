@@ -264,6 +264,12 @@ public class AnnotationConfigUtils {
 		processCommonDefinitionAnnotations(abd, abd.getMetadata());
 	}
 
+	/**
+     * 用于处理一些通用的bean属性，包括{@link Lazy @Lazy}、{@link Primary @Primary}、
+     * {@link DependsOn @DependsOn}、{@link Role @Role}、{@link Description @Description}
+     * 
+     * @param abd
+     */
 	static void processCommonDefinitionAnnotations(AnnotatedBeanDefinition abd, AnnotatedTypeMetadata metadata) {
 		if (metadata.isAnnotated(Lazy.class.getName())) {
 			abd.setLazyInit(attributesFor(metadata, Lazy.class).getBoolean("value"));

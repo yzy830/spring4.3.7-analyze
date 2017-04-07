@@ -24,6 +24,15 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 /**
+ * <pre>
+ * {@link SimpleMetadataReaderFactory}
+ *      <- {@code CachingMetadataReaderFactory}
+ * </pre>
+ * 
+ * <p>
+ * 使用LinkedHashMap对{@link SimpleMetadataReaderFactory}解析出来MetaReader做简单的缓存
+ * </p>
+ * 
  * Caching implementation of the {@link MetadataReaderFactory} interface,
  * caching a {@link MetadataReader} instance per Spring {@link Resource} handle
  * (i.e. per ".class" file).

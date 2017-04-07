@@ -21,6 +21,10 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.ClassMetadata;
 
 /**
+ * <p>
+ * 定义从指定resource获得ClassMetadata和AnnotaionMetadata的接口。
+ * </p>
+ * 
  * Simple facade for accessing class metadata,
  * as read by an ASM {@link org.springframework.asm.ClassReader}.
  *

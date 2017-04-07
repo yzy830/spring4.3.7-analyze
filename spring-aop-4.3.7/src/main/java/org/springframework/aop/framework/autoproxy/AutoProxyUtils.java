@@ -31,6 +31,10 @@ import org.springframework.core.Conventions;
 public abstract class AutoProxyUtils {
 
 	/**
+	 * <p>
+	 * 设置这个属性为true，可以强制设定，在创建代理时，代理总是可以转换为目标类型
+	 * </p>
+	 * 
 	 * Bean definition attribute that may indicate whether a given bean is supposed
 	 * to be proxied with its target class (in case of it getting proxied in the first
 	 * place). The value is {@code Boolean.TRUE} or {@code Boolean.FALSE}.

@@ -46,6 +46,10 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 
 
 	/**
+	 * <p>
+	 * 获得当前正在被调动的工厂方法
+	 * </p>
+	 * 
 	 * Return the factory method currently being invoked or {@code null} if none.
 	 * <p>Allows factory method implementations to determine whether the current
 	 * caller is the container itself as opposed to user code.

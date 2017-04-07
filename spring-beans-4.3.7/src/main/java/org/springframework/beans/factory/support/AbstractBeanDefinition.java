@@ -563,7 +563,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	/**
 	 * <p>
 	 * autowire的执行模式，{@link autowireMode}的默认值是{@link #AUTOWIRE_NO}，即不使用autowire。
-	 * 这个值用于处理，XML配置中，autowire属性的配置，与JAVA配置中的{@link Autowired @Autowired}标签无关
+	 * 这个值用于处理，XML和{@link Bean @Bean}配置中，autowire属性的配置，与JAVA配置中的{@link Autowired @Autowired}标签无关
 	 * </p>
 	 * 
 	 * Set the autowire mode. This determines whether any automagical detection

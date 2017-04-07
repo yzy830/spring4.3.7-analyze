@@ -262,6 +262,17 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 	}
 
 	/**
+	 * <p>
+	 * 搜索指定的package，获得bean definition，并处理来自{@link ComponentScan}的通用配置，以及组建上定义的
+	 * {@link Lazy @Lazy}、{@link Primary @Primary}、
+     * {@link DependsOn @DependsOn}、{@link Role @Role}、{@link Description @Description}等标签。<br/>
+     * <br/>
+     * 从这里的处理可以看出，{@link org.springframework.beans.factory.annotation.Autowired @Autowired}并不在处理之列，
+     * 他并不在bean definition的{@link org.springframework.beans.PropertyValues PropertyValues}或者
+     * {@link org.springframework.beans.factory.config.ConstructorArgumentValues ConstructorArgumentValues}中，
+     * 而是由一个单独的{@code BeanPostProces}处理
+	 * </p>
+	 * 
 	 * Perform a scan within the specified base packages,
 	 * returning the registered bean definitions.
 	 * <p>This method does <i>not</i> register an annotation config processor
@@ -273,12 +284,14 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 		Assert.notEmpty(basePackages, "At least one base package must be specified");
 		Set<BeanDefinitionHolder> beanDefinitions = new LinkedHashSet<BeanDefinitionHolder>();
 		for (String basePackage : basePackages) {
+		    // 这里得到的BeanDefinition，只具有基本信息：类的限定名、配置源
 			Set<BeanDefinition> candidates = findCandidateComponents(basePackage);
 			for (BeanDefinition candidate : candidates) {
 				ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(candidate);
 				candidate.setScope(scopeMetadata.getScopeName());
 				String beanName = this.beanNameGenerator.generateBeanName(candidate, this.registry);
 				if (candidate instanceof AbstractBeanDefinition) {
+				    //处理来自@ComponentScan的基本配置
 					postProcessBeanDefinition((AbstractBeanDefinition) candidate, beanName);
 				}
 				if (candidate instanceof AnnotatedBeanDefinition) {
@@ -297,13 +310,19 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 	}
 
 	/**
+	 * <p>
+	 * 配置从{@link ComponentScan @ComponentScan}获得的通用配置，例如lazyInit等
+	 * </p>
+	 * 
 	 * Apply further settings to the given bean definition,
 	 * beyond the contents retrieved from scanning the component class.
 	 * @param beanDefinition the scanned bean definition
 	 * @param beanName the generated bean name for the given bean
 	 */
 	protected void postProcessBeanDefinition(AbstractBeanDefinition beanDefinition, String beanName) {
+	    // 配置从@CompoenentScan得到的、对所有bean有效的信息
 		beanDefinition.applyDefaults(this.beanDefinitionDefaults);
+		// 
 		if (this.autowireCandidatePatterns != null) {
 			beanDefinition.setAutowireCandidate(PatternMatchUtils.simpleMatch(this.autowireCandidatePatterns, beanName));
 		}

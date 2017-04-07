@@ -35,6 +35,10 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
 /**
+ * <p>
+ * 一个配置类的完整信息，包括配置类的元数据、资源文件、bean方法、import的配置文件、import的ImportBeanDefinitionRegistrar等
+ * </p>
+ * 
  * Represents a user-defined {@link Configuration @Configuration} class.
  * Includes a set of {@link Bean} methods, including all such methods
  * defined in the ancestry of the class, in a 'flattened-out' manner.

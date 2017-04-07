@@ -107,6 +107,10 @@ class ConfigurationClassBeanDefinitionReader {
 
 
 	/**
+	 * 处理一个配置类引入了其他配置
+	 * 
+	 * @see #loadBeanDefinitionsForConfigurationClass(ConfigurationClass, TrackedConditionEvaluator)
+	 * 
 	 * Read {@code configurationModel}, registering bean definitions
 	 * with the registry based on its contents.
 	 */
@@ -118,6 +122,12 @@ class ConfigurationClassBeanDefinitionReader {
 	}
 
 	/**
+	 * <p>
+	 * 这个方法加载一个配置类引入的bean definition，包括{@link Bean @Bean}、{@link Import @Import}、
+	 * {@link ImportResource @ImportResource}。但是，不包括{@link ComponentScan}引入的方法，他已经
+	 * 在{@link org.springframework.context.annotation.ConfigurationClassParser ConfigurationClassParser}中处理了
+	 * </p>
+	 * 
 	 * Read a particular {@link ConfigurationClass}, registering bean definitions
 	 * for the class itself and all of its {@link Bean} methods.
 	 */
@@ -199,6 +209,7 @@ class ConfigurationClassBeanDefinitionReader {
 		}
 
 		ConfigurationClassBeanDefinition beanDef = new ConfigurationClassBeanDefinition(configClass, metadata);
+		// resource与source的区别。resource代表资源，例如一个properties或者class文件，source表示元数据的来源
 		beanDef.setResource(configClass.getResource());
 		beanDef.setSource(this.sourceExtractor.extractSource(metadata, configClass.getResource()));
 
@@ -212,11 +223,14 @@ class ConfigurationClassBeanDefinitionReader {
 			beanDef.setFactoryBeanName(configClass.getBeanName());
 			beanDef.setUniqueFactoryMethodName(methodName);
 		}
+		// 因此，@Bean方法均不需要使用@Autowired，默认使用AUTOWIRE_CONSTRUCTOR处理
 		beanDef.setAutowireMode(RootBeanDefinition.AUTOWIRE_CONSTRUCTOR);
+		// @Bean方法均跳过@Required check。RequiredAnnotationBeanPostProcessor同时检测了factory bean name和这个标志，
+		// 如果注释掉这个标志，并把@Bean方法设置为static，则@Required标签会对@Bean方法生效
 		beanDef.setAttribute(RequiredAnnotationBeanPostProcessor.SKIP_REQUIRED_CHECK_ATTRIBUTE, Boolean.TRUE);
 
 		AnnotationConfigUtils.processCommonDefinitionAnnotations(beanDef, metadata);
-
+		// @Bean的默认autowire属性也是NO，因此method创建的bean也不需要执行autowire
 		Autowire autowire = bean.getEnum("autowire");
 		if (autowire.isAutowire()) {
 			beanDef.setAutowireMode(autowire.value());

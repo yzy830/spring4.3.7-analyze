@@ -204,6 +204,8 @@ class ConfigurationClassEnhancer {
 
 
 	/**
+	 * <p>修改byte code，引入一个BeanFactory字段</p>
+	 * 
 	 * Custom extension of CGLIB's DefaultGeneratorStrategy, introducing a {@link BeanFactory} field.
 	 * Also exposes the application ClassLoader as thread context ClassLoader for the time of
 	 * class generation (in order for ASM to pick it up when doing common superclass resolution).
@@ -262,6 +264,8 @@ class ConfigurationClassEnhancer {
 
 
 	/**
+	 * <p>拦截setBeanFactory方法，用来设置bean factory</p>
+	 * 
 	 * Intercepts the invocation of any {@link BeanFactoryAware#setBeanFactory(BeanFactory)} on
 	 * {@code @Configuration} class instances for the purpose of recording the {@link BeanFactory}.
 	 * @see EnhancedConfiguration
@@ -293,6 +297,8 @@ class ConfigurationClassEnhancer {
 
 
 	/**
+	 * <p>拦截所有被{@link Bean @Bean}标注的方法</p>
+	 * 
 	 * Intercepts the invocation of any {@link Bean}-annotated methods in order to ensure proper
 	 * handling of bean semantics such as scoping and AOP proxying.
 	 * @see Bean
@@ -301,6 +307,24 @@ class ConfigurationClassEnhancer {
 	private static class BeanMethodInterceptor implements MethodInterceptor, ConditionalCallback {
 
 		/**
+		 * <p>
+		 * 这个方法需要处理三种情况
+		 * <ol>
+		 * <li>如果当前代理的方法，是spring正在调用的工厂方法，则直接调用目标类的方法(父类方法)，创建实例</li>
+		 * <li>
+		 *    如果bean是一个FactoryBean，并且FactoryBean和其生成的bean都已经存在，则需要给FactoryBean创建代理，
+		 *    拦截getObject方法，使用{@link BeanFactory#getBean(String)}替代
+		 * </li>
+		 * <li>
+		 *    如果不是FactoryBean或者其实例尚未创建，则使用{@link BeanFactory#getBean(String)}统一从BeanFactory
+		 *    获取。这个时候如果bean尚未创建，BeanFacotry会去直接调用工厂方法，因此会走到步骤1
+		 * </li>
+		 * </ol>
+		 * 
+		 * 这里有一个问题需要考虑，如果并发调用工厂方法A，A调用工厂方法B，B生成一个FactoryBean，这个创建的FactoryBean可能没有创建代理，
+		 * 再去调用getObject，是否会有问题
+		 * </p>
+		 * 
 		 * Enhance a {@link Bean @Bean} method to check the supplied BeanFactory for the
 		 * existence of this bean object.
 		 * @throws Throwable as a catch-all for any exception that may be thrown when invoking the
@@ -331,6 +355,7 @@ class ConfigurationClassEnhancer {
 			// is the same as that of referring to a FactoryBean within XML. See SPR-6602.
 			if (factoryContainsBean(beanFactory, BeanFactory.FACTORY_BEAN_PREFIX + beanName) &&
 					factoryContainsBean(beanFactory, beanName)) {
+			    // 处理FactoryBean，创建代理
 				Object factoryBean = beanFactory.getBean(BeanFactory.FACTORY_BEAN_PREFIX + beanName);
 				if (factoryBean instanceof ScopedProxyFactoryBean) {
 					// Scoped proxy factory beans are a special case and should not be further proxied
@@ -342,6 +367,7 @@ class ConfigurationClassEnhancer {
 			}
 
 			if (isCurrentlyInvokedFactoryMethod(beanMethod)) {
+			    // 此时，是spring在调用工厂方法创建bean，因此直接调用目标类的实现
 				// The factory is calling the bean method in order to instantiate and register the bean
 				// (i.e. via a getBean() call) -> invoke the super implementation of the method to actually
 				// create the bean instance.
@@ -370,6 +396,7 @@ class ConfigurationClassEnhancer {
 			// the in-creation status to false in order to avoid an exception.
 			boolean alreadyInCreation = beanFactory.isCurrentlyInCreation(beanName);
 			try {
+			    // 这里短暂的设置inCreation为false，是否引起问题？
 				if (alreadyInCreation) {
 					beanFactory.setCurrentlyInCreation(beanName, false);
 				}
@@ -404,6 +431,8 @@ class ConfigurationClassEnhancer {
 				Method currentlyInvoked = SimpleInstantiationStrategy.getCurrentlyInvokedFactoryMethod();
 				if (currentlyInvoked != null) {
 					String outerBeanName = BeanAnnotationHelper.determineBeanNameFor(currentlyInvoked);
+					// 由于在元数据中缺少依赖关系描述，因此这里需要注册一个bean之间的依赖关系，一遍在销毁的时候，保持正确的销毁顺序。
+					// @Autowired标签应该需要做同样的事情
 					beanFactory.registerDependentBean(beanName, outerBeanName);
 				}
 				return beanInstance;
@@ -431,6 +460,11 @@ class ConfigurationClassEnhancer {
 		}
 
 		/**
+		 * <p>
+		 *    检查一个bean是否已经创建好。如果一个bean在创建过程中，说明这是spring在初次调用factory method来创建bean，
+		 *    这种情况不能够拦截
+		 * </p>
+		 * 
 		 * Check the BeanFactory to see whether the bean named <var>beanName</var> already
 		 * exists. Accounts for the fact that the requested bean may be "in creation", i.e.:
 		 * we're in the middle of servicing the initial request for this bean. From an enhanced
@@ -448,6 +482,11 @@ class ConfigurationClassEnhancer {
 		}
 
 		/**
+		 * <p>
+		 * 判断当前被代理的方法是否是正在调用的工厂方法(spring在调用工厂方法创建bean时，会记录)，如果是，则表示这次调用是
+		 * spring正常构建bean，因此不需要代理处理，直接创建bean
+		 * </p>
+		 * 
 		 * Check whether the given method corresponds to the container's currently invoked
 		 * factory method. Compares method name and parameter types only in order to work
 		 * around a potential problem with covariant return types (currently only known
@@ -460,6 +499,11 @@ class ConfigurationClassEnhancer {
 		}
 
 		/**
+		 * <p>
+		 * 为FactoryBean创建代理，拦截getObject方法，返回BeanFactory中缓存的实例，由{@link BeanFactory#getBean(Class)}来控制
+		 * scope
+		 * </p>
+		 * 
 		 * Create a subclass proxy that intercepts calls to getObject(), delegating to the current BeanFactory
 		 * instead of creating a new instance. These proxies are created only when calling a FactoryBean from
 		 * within a Bean method, allowing for proper scoping semantics even when working against the FactoryBean
@@ -518,6 +562,14 @@ class ConfigurationClassEnhancer {
 					});
 		}
 
+		/**
+		 * 为factory bean创建代理，拦截getObject方法，返回单例
+		 * 
+		 * @param factoryBean
+		 * @param beanFactory
+		 * @param beanName
+		 * @return
+		 */
 		private Object createCglibProxyForFactoryBean(final Object factoryBean,
 				final ConfigurableBeanFactory beanFactory, final String beanName) {
 

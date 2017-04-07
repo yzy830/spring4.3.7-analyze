@@ -27,6 +27,17 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.ClassMetadata;
 
 /**
+ * <pre>
+ * {@link MetadataReader}
+ *      <- {@code SimpleMetadataReader}
+ * </pre>
+ * 
+ * <p>
+ * 分析class文件，得到{@link ClassMetadata}和{@link AnnotationMetadata}。<br/>
+ * <br/>
+ * 这里的{@link Resource}必须是一个class文件
+ * </p>
+ * 
  * {@link MetadataReader} implementation based on an ASM
  * {@link org.springframework.asm.ClassReader}.
  *

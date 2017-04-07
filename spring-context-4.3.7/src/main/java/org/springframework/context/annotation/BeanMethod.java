@@ -21,6 +21,15 @@ import org.springframework.beans.factory.parsing.ProblemReporter;
 import org.springframework.core.type.MethodMetadata;
 
 /**
+ * <pre>
+ * {@link ConfigurationMethod}
+ *      <- {@code BeanMethod}
+ * </pre>
+ * 
+ * <p>
+ * 表示一个由{@link Bean @Bean}标注的方法
+ * </p>
+ * 
  * Represents a {@link Configuration} class method marked with the
  * {@link Bean} annotation.
  *
@@ -37,6 +46,10 @@ final class BeanMethod extends ConfigurationMethod {
 		super(metadata, configurationClass);
 	}
 
+	/**
+	 * 验证配置方法。如果声明方法的类标注{@link Configuration @Configuration}，并且方法是{@code non-static}的，那么
+	 * 这个方法必须可以重写，否则存在配置冲突
+	 * */
 	@Override
 	public void validate(ProblemReporter problemReporter) {
 		if (getMetadata().isStatic()) {

@@ -21,6 +21,16 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.MethodMetadata;
 
 /**
+ * <pre>
+ * {@link BeanDefinition}
+ *      <- {@code AnnotatedBeanDefinition}
+ * </pre>
+ * 
+ * <p>
+ * 这个类定义了{@link #getMetadata()}和{@link #getFactoryMethodMetadata()}两种方法，用于获得
+ * 提供bean definition的类或者工厂方法的元数据
+ * </p>
+ * 
  * Extended {@link org.springframework.beans.factory.config.BeanDefinition}
  * interface that exposes {@link org.springframework.core.type.AnnotationMetadata}
  * about its bean class - without requiring the class to be loaded yet.

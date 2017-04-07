@@ -35,6 +35,10 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 /**
+ * <p>
+ * 通过直接分析class文件获得class的元数据信息，包括class的名称、父类、接口、annotation元数据都可以从class文件解析
+ * </p>
+ * 
  * ASM class visitor which looks for the class name and implemented types as
  * well as for the annotations defined on the class, exposing them through
  * the {@link org.springframework.core.type.AnnotationMetadata} interface.

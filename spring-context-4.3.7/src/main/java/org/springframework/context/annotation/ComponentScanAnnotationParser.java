@@ -73,6 +73,22 @@ class ComponentScanAnnotationParser {
 	}
 
 
+	/**
+	 * 处理一个{@link ComponentScan @ComponentScan}标签，根据{@code @ComponentScan}的配置，搜索bean组建，并注册。<br/>
+	 * <br/>
+	 * 使用{@link ClassPathBeanDefinitionScanner}执行搜索，这个类派生自{@link ClassPathBeanDefinitionScanner}，在
+	 * 具体搜索之前，需要配置filter等信息。<br/>
+	 * <br/>
+	 * {@link ClassPathBeanDefinitionScanner#doScan(String...)}完成具体的bean注册。<br/>
+	 * <br/>
+	 * 这里生成的BeanDefinition并不包括{@link org.springframework.beans.factory.annotation.Autowired @Autowired}等标签的处理
+	 * 
+	 * @see ClassPathBeanDefinitionScanner#doScan(String...)
+	 * 
+	 * @param componentScan
+	 * @param declaringClass
+	 * @return
+	 */
 	public Set<BeanDefinitionHolder> parse(AnnotationAttributes componentScan, final String declaringClass) {
 		Assert.state(this.environment != null, "Environment must not be null");
 		Assert.state(this.resourceLoader != null, "ResourceLoader must not be null");
@@ -107,6 +123,7 @@ class ComponentScanAnnotationParser {
 			}
 		}
 
+		// 在ComponentScan中设置lazyInit会影响所有被这个CompoenentScan覆盖的所有Bean
 		boolean lazyInit = componentScan.getBoolean("lazyInit");
 		if (lazyInit) {
 			scanner.getBeanDefinitionDefaults().setLazyInit(true);

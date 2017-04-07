@@ -23,6 +23,16 @@ import org.springframework.core.type.StandardAnnotationMetadata;
 import org.springframework.util.Assert;
 
 /**
+ * <pre>
+ * {@link GenericBeanDefinition}
+ * {@link AnnotatedBeanDefinition}
+ *      <- {@code AnnotatedGenericBeanDefinition}
+ * </pre>
+ * 
+ * <p>
+ * 扩展了{@link GenericBeanDefinition}，提供由annotationd定义的元数据的访问接口
+ * </p>
+ * 
  * Extension of the {@link org.springframework.beans.factory.support.GenericBeanDefinition}
  * class, adding support for annotation metadata exposed through the
  * {@link AnnotatedBeanDefinition} interface.

@@ -25,6 +25,17 @@ import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.util.Assert;
 
 /**
+ * <pre>
+ * {@link GenericBeanDefinition}
+ * {@link AnnotatedBeanDefinition}
+ *      <- {@code ScannedGenericBeanDefinition}
+ * </pre>
+ * 
+ * <p>
+ * 从对外的功能上看，这个类与{@link AnnotatedGenericBeanDefinition}一致，但是他的元数据不是通过反射得到，而是
+ * 通过分析class文件，也就是说BeanDefinition对应的Class尚未加载
+ * </p>
+ * 
  * Extension of the {@link org.springframework.beans.factory.support.GenericBeanDefinition}
  * class, based on an ASM ClassReader, with support for annotation metadata exposed
  * through the {@link AnnotatedBeanDefinition} interface.

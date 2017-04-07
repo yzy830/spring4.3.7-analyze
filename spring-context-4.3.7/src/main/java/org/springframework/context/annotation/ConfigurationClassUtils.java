@@ -70,6 +70,26 @@ abstract class ConfigurationClassUtils {
 
 
 	/**
+	 * <p>
+	 * 这个方法写的不好，做了两件事情，但是在命名上看不出来。
+	 * <ol>
+	 * <li>
+	 *     检查一个bean definition是否作为配置候选。配置候选bean definition在{@link ConfigurationClassPostProcessor#postProcessBeanFactory(org.springframework.beans.factory.config.ConfigurableListableBeanFactory)}，
+	 *     会做代理处理。
+	 *     <ul>
+	 *         <li>如果bean class上标注了{@link Configuration @Configuration}，设置{@link #CONFIGURATION_CLASS_ATTRIBUTE}属性为{@link #CONFIGURATION_CLASS_FULL}</li>
+	 *         <li>
+	 *             如果bean class上标注了{@link Import @Import}、{@link ImportResource @ImportResource}、{@link ComponentScan @ComponentScan}、
+	 *             {@link Component @Component}等标签，设置{@link #CONFIGURATION_CLASS_ATTRIBUTE}属性为{@link #CONFIGURATION_CLASS_LITE}
+	 *         </li>
+	 *     </ul>
+	 * </li>
+	 * <li>
+	 *     为配置候选的bean definition，检查{@link Order @Order}配置，设置{@link #ORDER_ATTRIBUTE}属性
+	 * </li>
+	 * </ol>
+	 * </p>
+	 * 
 	 * Check whether the given bean definition is a candidate for a configuration class
 	 * (or a nested component class declared within a configuration/component class,
 	 * to be auto-registered as well), and mark it accordingly.
@@ -109,9 +129,11 @@ abstract class ConfigurationClassUtils {
 		}
 
 		if (isFullConfigurationCandidate(metadata)) {
+		    // bean定义上，标记了@Configuration标签，标记CONFIGURATION_CLASS_ATTRIBUTE属性为CONFIGURATION_CLASS_FULL
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_FULL);
 		}
 		else if (isLiteConfigurationCandidate(metadata)) {
+		    // bean上有@Import、@ComponentScan、@ImportResource、@Component等标签，标记CONFIGURATION_CLASS_ATTRIBUTE属性为CONFIGURATION_CLASS_LITE
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_LITE);
 		}
 		else {
@@ -119,6 +141,7 @@ abstract class ConfigurationClassUtils {
 		}
 
 		// It's a full or lite configuration candidate... Let's determine the order value, if any.
+		// 提取@Order，用于后续处理排序
 		Map<String, Object> orderAttributes = metadata.getAnnotationAttributes(Order.class.getName());
 		if (orderAttributes != null) {
 			beanDef.setAttribute(ORDER_ATTRIBUTE, orderAttributes.get(AnnotationUtils.VALUE));

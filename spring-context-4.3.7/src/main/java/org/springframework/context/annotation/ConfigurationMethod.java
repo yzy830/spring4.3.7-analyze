@@ -21,6 +21,10 @@ import org.springframework.beans.factory.parsing.ProblemReporter;
 import org.springframework.core.type.MethodMetadata;
 
 /**
+ * <p>
+ * 配置方法
+ * </p>
+ * 
  * @author Chris Beams
  * @since 3.1
  */
@@ -57,6 +61,13 @@ abstract class ConfigurationMethod {
 		return fullyQualifiedMethodName.substring(fullyQualifiedMethodName.indexOf('#') + 1);
 	}
 
+	/**
+	 * 验证配置方法
+	 * 
+	 * @see BeanMethod#validate(ProblemReporter)
+	 * 
+	 * @param problemReporter
+	 */
 	public void validate(ProblemReporter problemReporter) {
 	}
 

@@ -135,6 +135,10 @@ public class BeanDefinitionReaderUtils {
 	}
 
 	/**
+	 * <p>
+	 * 将bean definition注册到BeanFactory中
+	 * </p>
+	 * 
 	 * Register the given bean definition with the given bean factory.
 	 * @param definitionHolder the bean definition including name and aliases
 	 * @param registry the bean factory to register with
