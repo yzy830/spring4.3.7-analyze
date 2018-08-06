@@ -1027,18 +1027,20 @@ public abstract class AnnotationUtils {
 
 		AnnotationAttributes attributes =
 				retrieveAnnotationAttributes(annotatedElement, annotation, classValuesAsString, nestedAnnotationsAsMap);
+		// retrieveAnnotationAttributes方法不会处理AliasFor标签，这里补充处理
 		postProcessAnnotationAttributes(annotatedElement, attributes, classValuesAsString, nestedAnnotationsAsMap);
 		return attributes;
 	}
 
 	/**
 	 * <p>
-	 * 提取一个Annotation实例的属性值，保存为AnnotationAttributes。
+	 * 提取一个Annotation实例的属性值，保存为AnnotationAttributes。在这个方法中，不会处理AliasFor标签，因此别名属性
+	 * 会占用一个独立的属性
 	 * <ol>
      * <li>如果{@code classValuesAsString}为true，则Class类型的属性会以类名替换、Class[]会以类名数组替换</li>
      * <li>
      * 如果{@code nestedAnnotationsAsMap}为true，则Annotation类型的属性会提取为AnnotationAttributes，
-     * Annotation[]提取为AnnotationAttributes数组
+     * Annotation[]提取为AnnotationAttributes数组；反之，则会使用给Annotation创建动态代理，处理Alias以及嵌套的Annotation属性
      * </li>
      * </ol>
 	 * </p>
@@ -1128,6 +1130,7 @@ public abstract class AnnotationUtils {
 	static Object adaptValue(Object annotatedElement, Object value, boolean classValuesAsString,
 			boolean nestedAnnotationsAsMap) {
 
+		// 如果classValuesAsString为true，则将class表示为一个full package name
 		if (classValuesAsString) {
 			if (value instanceof Class) {
 				return ((Class<?>) value).getName();
@@ -1149,6 +1152,13 @@ public abstract class AnnotationUtils {
 				return getAnnotationAttributes(annotatedElement, annotation, classValuesAsString, true);
 			}
 			else {
+				/*
+				 * 合成的目的主要是为了处理@AliasFor，因为嵌套Annotation属性中，也可能存在AliasFor所以，只要存在
+				 * Annotation、Annotation[]属性或者AliasFor标签，就需要合成。
+				 *
+				 * 合成的方式是，给annotation创建了一个动态代理，对AliasFor属性做特殊处理，合并AliasFor属性声明的值。
+				 * 如果是Annotation属性，也会给Annotation再次调用synthesizeAnnotation
+				 * */
 				return synthesizeAnnotation(annotation, annotatedElement);
 			}
 		}
@@ -1482,6 +1492,10 @@ public abstract class AnnotationUtils {
 				new DefaultAnnotationAttributeExtractor(annotation, annotatedElement);
 		InvocationHandler handler = new SynthesizedAnnotationInvocationHandler(attributeExtractor);
 
+		/*
+		* 这一个语法特性需要注意，虽然Annotation不能继承接口，但是接口可以继承Annotation，class也可以实现
+		* Annotation
+		* */
 		// Can always expose Spring's SynthesizedAnnotation marker since we explicitly check for a
 		// synthesizable annotation before (which needs to declare @AliasFor from the same package)
 		Class<?>[] exposedInterfaces = new Class<?>[] {annotationType, SynthesizedAnnotation.class};
@@ -1763,6 +1777,10 @@ public abstract class AnnotationUtils {
 	}
 
 	/**
+	 * <p>
+	 *     获得一个Annotation定义的所有属性方法
+	 * </p>
+	 *
 	 * Get all methods declared in the supplied {@code annotationType} that
 	 * match Java's requirements for annotation <em>attributes</em>.
 	 * <p>All methods in the returned list will be
@@ -2246,6 +2264,9 @@ public abstract class AnnotationUtils {
 			return otherDescriptors;
 		}
 
+		/**
+		 * 可以根据annotation的层次逐级往上查找
+		 * */
 		public String getAttributeOverrideName(Class<? extends Annotation> metaAnnotationType) {
 			Assert.notNull(metaAnnotationType, "metaAnnotationType must not be null");
 			Assert.isTrue(Annotation.class != metaAnnotationType,
@@ -2312,7 +2333,9 @@ public abstract class AnnotationUtils {
 		}
 	}
 
-
+	/**
+	 * 主要用于在处理{@link AnnotationAttributes}时，区分一个值是否是默认值
+	 * */
 	private static class DefaultValueHolder {
 
 		final Object defaultValue;

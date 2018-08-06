@@ -74,7 +74,8 @@ public class StandardAnnotationMetadata extends StandardClassMetadata implements
 		 * 包含indirect annotation(repeatable annotation)
 		 * */
 		this.annotations = introspectedClass.getAnnotations();
-		// 是否将nested annotation的配置表示为AnnotationAttributes(本质上市key-value map)
+		// 是否将nested annotation的配置表示为AnnotationAttributes(本质上市key-value map)，否则将会为Annotation创建代理，
+		// 以处理@AliasFor标签
 		this.nestedAnnotationsAsMap = nestedAnnotationsAsMap;
 	}
 
@@ -94,6 +95,9 @@ public class StandardAnnotationMetadata extends StandardClassMetadata implements
 				AnnotatedElementUtils.getMetaAnnotationTypes(getIntrospectedClass(), annotationName) : null);
 	}
 
+	/**
+	 * 判断类的present annotation是否存在annotationName指定的annotation
+	 * */
 	@Override
 	public boolean hasAnnotation(String annotationName) {
 		for (Annotation ann : this.annotations) {
@@ -104,40 +108,72 @@ public class StandardAnnotationMetadata extends StandardClassMetadata implements
 		return false;
 	}
 
+	/**
+	 * 判断类的present annotation的meta annotation是否存在annotationName指定的annotation
+	 * */
 	@Override
 	public boolean hasMetaAnnotation(String annotationName) {
 		return (this.annotations.length > 0 &&
 				AnnotatedElementUtils.hasMetaAnnotationTypes(getIntrospectedClass(), annotationName));
 	}
 
+	/**
+	 * 判断类的
+	 * (1) present annotation
+	 * (2) 或者present annotation的meta annotation上
+	 * 是否存在annotationName指定的meta annotation
+	 * */
 	@Override
 	public boolean isAnnotated(String annotationName) {
 		return (this.annotations.length > 0 &&
 				AnnotatedElementUtils.isAnnotated(getIntrospectedClass(), annotationName));
 	}
 
+	/**
+	 * 获取类的annotation层次(direct present annotation->direct present meta annotation->inherited annotation->inherited meta annotation)中，
+	 * annotationName指定的第一个Annotation属性值
+	 * */
 	@Override
 	public Map<String, Object> getAnnotationAttributes(String annotationName) {
 		return getAnnotationAttributes(annotationName, false);
 	}
 
+	/**
+	 * 获取类的annotation层次(direct present annotation->direct present meta annotation->inherited annotation->inherited meta annotation)中，
+	 * annotationName指定的第一个Annotation属性值
+	 *
+	 * 如果这个annotation是一个meta annotation，会使用其标注的annotation的别名属性来覆盖
+	 *
+	 * @param classValuesAsString：将class值表示为class full package name
+	 * */
 	@Override
 	public Map<String, Object> getAnnotationAttributes(String annotationName, boolean classValuesAsString) {
 		return (this.annotations.length > 0 ? AnnotatedElementUtils.getMergedAnnotationAttributes(
 				getIntrospectedClass(), annotationName, classValuesAsString, this.nestedAnnotationsAsMap) : null);
 	}
 
+	/**
+	 * 获取annotationName指定的所有annotation的属性值
+	 * */
 	@Override
 	public MultiValueMap<String, Object> getAllAnnotationAttributes(String annotationName) {
 		return getAllAnnotationAttributes(annotationName, false);
 	}
 
+	/**
+	 * 获取annotationName指定的所有annotation的属性值。
+	 *
+	 * 与{@link #getAnnotationAttributes(String)}的区别是，这个方法不处理annotation标注层次中的@AliasFor
+	 * */
 	@Override
 	public MultiValueMap<String, Object> getAllAnnotationAttributes(String annotationName, boolean classValuesAsString) {
 		return (this.annotations.length > 0 ? AnnotatedElementUtils.getAllAnnotationAttributes(
 				getIntrospectedClass(), annotationName, classValuesAsString, this.nestedAnnotationsAsMap) : null);
 	}
 
+	/**
+	 * 判断是否存annotationName指定标签标注的declared method(present annotation或者meta annotation，method不能继承)
+	 * */
 	@Override
 	public boolean hasAnnotatedMethods(String annotationName) {
 		try {
@@ -155,6 +191,9 @@ public class StandardAnnotationMetadata extends StandardClassMetadata implements
 		}
 	}
 
+	/**
+	 * 获取annotationName指定标签标注的declared method(present annotation或者meta annotation，method不能继承)
+	 * */
 	@Override
 	public Set<MethodMetadata> getAnnotatedMethods(String annotationName) {
 		try {

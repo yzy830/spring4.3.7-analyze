@@ -54,6 +54,11 @@ import org.springframework.core.io.ResourceLoader;
 public interface ResourcePatternResolver extends ResourceLoader {
 
 	/**
+	 * <p>
+	 *     "classpath*:"与"classpath:"的区别在于，前者表示所有jar的跟路径，而后者只是
+	 *     启动程序的根路径？
+	 * </p>
+	 *
 	 * Pseudo URL prefix for all matching resources from the class path: "classpath*:"
 	 * This differs from ResourceLoader's classpath URL prefix in that it
 	 * retrieves all matching resources for a given name (e.g. "/beans.xml"),

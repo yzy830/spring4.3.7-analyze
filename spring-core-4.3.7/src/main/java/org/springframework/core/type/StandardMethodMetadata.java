@@ -109,6 +109,9 @@ public class StandardMethodMetadata implements MethodMetadata {
 		return (!isStatic() && !isFinal() && !Modifier.isPrivate(this.introspectedMethod.getModifiers()));
 	}
 
+	/**
+	* 判断method是否被annotationName指定的annotation标注(通过Declared annotation或者declared annotation的meta annotation)
+	* */
 	@Override
 	public boolean isAnnotated(String annotationName) {
 		return AnnotatedElementUtils.isAnnotated(this.introspectedMethod, annotationName);
@@ -119,6 +122,14 @@ public class StandardMethodMetadata implements MethodMetadata {
 		return getAnnotationAttributes(annotationName, false);
 	}
 
+	/**
+	 * 获取类的annotation层次(direct present annotation->direct present meta annotation)中，
+	 * annotationName指定的第一个Annotation属性值
+	 *
+	 * 如果这个annotation是一个meta annotation，会使用其标注的annotation的别名属性来覆盖
+	 *
+	 * @param classValuesAsString：将class值表示为class full package name
+	 * */
 	@Override
 	public Map<String, Object> getAnnotationAttributes(String annotationName, boolean classValuesAsString) {
 		return AnnotatedElementUtils.getMergedAnnotationAttributes(this.introspectedMethod,
@@ -130,6 +141,11 @@ public class StandardMethodMetadata implements MethodMetadata {
 		return getAllAnnotationAttributes(annotationName, false);
 	}
 
+	/**
+	 * 获取annotationName指定的所有annotation的属性值。
+	 *
+	 * 与{@link #getAnnotationAttributes(String)}的区别是，这个方法不处理annotation标注层次中的@AliasFor
+	 * */
 	@Override
 	public MultiValueMap<String, Object> getAllAnnotationAttributes(String annotationName, boolean classValuesAsString) {
 		return AnnotatedElementUtils.getAllAnnotationAttributes(this.introspectedMethod,

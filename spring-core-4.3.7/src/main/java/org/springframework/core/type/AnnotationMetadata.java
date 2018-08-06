@@ -47,6 +47,10 @@ import java.util.Set;
 public interface AnnotationMetadata extends ClassMetadata, AnnotatedTypeMetadata {
 
 	/**
+	 * <p>
+	 *     获取Class上的Present Annotation
+	 * </p>
+	 *
 	 * Get the fully qualified class names of all annotation types that
 	 * are <em>present</em> on the underlying class.
 	 * @return the annotation type names
@@ -54,6 +58,12 @@ public interface AnnotationMetadata extends ClassMetadata, AnnotatedTypeMetadata
 	Set<String> getAnnotationTypes();
 
 	/**
+	 * <p>
+	 *     如果annotationName指定的Annotation present on在AnnotationMetadata描述的Class，
+	 *     getMetaAnnotationTypes会返回annotationName Annotation上所有的meta annotation
+	 *     以及meta annotation的meta annotation，参考{@link com.gerald.analyze.annotation.StandardAnnotationMetadata.Foo}
+	 * </p>
+	 *
 	 * Get the fully qualified class names of all meta-annotation types that
 	 * are <em>present</em> on the given annotation type on the underlying class.
 	 * @param annotationName the fully qualified class name of the meta-annotation
@@ -63,6 +73,10 @@ public interface AnnotationMetadata extends ClassMetadata, AnnotatedTypeMetadata
 	Set<String> getMetaAnnotationTypes(String annotationName);
 
 	/**
+	 * <p>
+	 *     判断Class的Present Annotation是否存annotationName指定的Annotation
+	 * </p>
+	 *
 	 * Determine whether an annotation of the given type is <em>present</em> on
 	 * the underlying class.
 	 * @param annotationName the fully qualified class name of the annotation
@@ -72,6 +86,10 @@ public interface AnnotationMetadata extends ClassMetadata, AnnotatedTypeMetadata
 	boolean hasAnnotation(String annotationName);
 
 	/**
+	 * <p>
+	 *     判断Class的Present Annotation或者其meta annotation是否有metaAnnotationName指定的meta annotation
+	 * </p>
+	 *
 	 * Determine whether the underlying class has an annotation that is itself
 	 * annotated with the meta-annotation of the given type.
 	 * @param metaAnnotationName the fully qualified class name of the

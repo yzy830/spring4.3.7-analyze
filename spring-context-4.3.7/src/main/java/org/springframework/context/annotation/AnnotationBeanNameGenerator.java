@@ -74,6 +74,7 @@ public class AnnotationBeanNameGenerator implements BeanNameGenerator {
 			}
 		}
 		// Fallback: generate a unique default bean name.
+		// 采用首写字母消息来作为默认的beanName，"FooBah" becomes "fooBah" and "X" becomes "x", but "URL" stays as "URL".
 		return buildDefaultBeanName(definition, registry);
 	}
 
@@ -87,6 +88,14 @@ public class AnnotationBeanNameGenerator implements BeanNameGenerator {
 		Set<String> types = amd.getAnnotationTypes();
 		String beanName = null;
 		for (String type : types) {
+			/*
+			* 判断一个present annotation A或者A的meta annotation是否是org.springframework.stereotype.Component，
+			* 如果是，并且A具有value属性，value是String类型，则使用A#value作为beanname
+			*
+			* 如果一个Class的多个present annotation都标注了@Component，并且配置了不同的bean name，会抛出异常
+			*
+			* 这里需要注意的是，spring并没有使用@AliasFor来处理
+			* */
 			AnnotationAttributes attributes = AnnotationConfigUtils.attributesFor(amd, type);
 			if (isStereotypeWithNameValue(type, amd.getMetaAnnotationTypes(type), attributes)) {
 				Object value = attributes.get("value");
@@ -106,6 +115,8 @@ public class AnnotationBeanNameGenerator implements BeanNameGenerator {
 	}
 
 	/**
+	 * <p></p>
+	 *
 	 * Check whether the given annotation is a stereotype that is allowed
 	 * to suggest a component name through its annotation {@code value()}.
 	 * @param annotationType the name of the annotation class to check

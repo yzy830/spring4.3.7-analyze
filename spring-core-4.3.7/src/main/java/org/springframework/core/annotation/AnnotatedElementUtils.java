@@ -278,6 +278,14 @@ public class AnnotatedElementUtils {
 	}
 
 	/**
+	 * <p>
+	 * 判断element是否
+	 * (1) 存在annotationName指定的present annotation
+	 * (2) 或者present annotation的meta annotation上存在annotationName指定的meta annotation
+	 *
+	 * {@link #isAnnotated(AnnotatedElement, String)}返回true时，{@link #getMergedAnnotationAttributes}返回非空数据
+	 * </p>
+	 *
 	 * Determine if an annotation of the specified {@code annotationName} is
 	 * <em>present</em> on the supplied {@link AnnotatedElement} or within the
 	 * annotation hierarchy <em>above</em> the specified element.
@@ -315,6 +323,11 @@ public class AnnotatedElementUtils {
 	}
 
 	/**
+	 * <p>
+	 *     获取annotation扫描层次中，第一次出现的指定annotation。扫描的顺序由searchWithGetSemantics决定，annotated element的
+	 *     direct present annotation及其meta annotation优先于继承的annotation
+	 * </p>
+	 *
 	 * Get the first annotation of the specified {@code annotationType} within
 	 * the annotation hierarchy <em>above</em> the supplied {@code element} and
 	 * merge that annotation's attributes with <em>matching</em> attributes from
@@ -364,6 +377,10 @@ public class AnnotatedElementUtils {
 	}
 
 	/**
+	 * <p>
+	 *    获取annotation继承层次中，第一个出现的ann
+	 * </p>
+	 *
 	 * Get the first annotation of the specified {@code annotationName} within
 	 * the annotation hierarchy <em>above</em> the supplied {@code element} and
 	 * merge that annotation's attributes with <em>matching</em> attributes from
@@ -923,6 +940,14 @@ public class AnnotatedElementUtils {
 	 * annotation(使用{@code AnnotatedElement#getAnnotations()}) </br></br>
 	 * 
 	 * 对输入的AnnotatedElement，除了处理器present annotation以外，还会处理present annotation的meta annotation，一直递归，知道没有更底层的元数据标签。
+	 * </p>
+	 *
+	 * <p>
+	 *     searchWithGetSemantics的处理顺序是：
+	 *     (1) 顺序遍历处理AnnotatedElement的direct present annotation
+	 *     (2) 使用searchWithGetSemantics递归处理direct present annotation的meta annotation
+	 *     (3) 如果AnnotatedElement是class，顺序处理AnnotatedElement继承的annotation
+	 *     (4) 使用searchWithGetSemantics递归处理继承annotation的meta annotation
 	 * </p>
 	 * 
 	 * Perform the search algorithm for the {@link #searchWithGetSemantics}
@@ -1523,6 +1548,11 @@ public class AnnotatedElementUtils {
 
 
 	/**
+	 * <p>
+	 *     AlwaysTrueBooleanAnnotationProcessor使用{@code SimpleAnnotationProcessor(false)}实现，因此
+	 *     只有在Annotation名称、类型或者ContainerType匹配的时候，才会返回true；否则会返回null
+	 * </p>
+	 *
 	 * {@link SimpleAnnotationProcessor} that always returns {@link Boolean#TRUE} when
 	 * asked to {@linkplain #process(AnnotatedElement, Annotation, int) process} an
 	 * annotation.
@@ -1596,6 +1626,28 @@ public class AnnotatedElementUtils {
 					this.classValuesAsString, this.nestedAnnotationsAsMap);
 		}
 
+		/**
+		 * 这个方法，在{@link #searchWithGetSemanticsInAnnotations(AnnotatedElement, List, Class, String, Class, Processor, Set, int)}
+		 * 处理meta annotation时，在调用{@code searchWithGetSemantics}之后，用于处理annotation继承层次中的@AliasFor或者同名的property(property名称不是value)
+		 * 例如
+		 * <pre>
+		 *     @interface A {
+		 *         String property();
+		 *     }
+		 *
+		 *     @A
+		 *     @interface B {
+		 *         @AliasFor("property")
+		 *         String name();
+		 *     }
+		 * </pre>
+		 *
+		 * 在获得A的元数据时，会使用B#name的配置来覆盖A的默认配置
+		 *
+		 * 这种特性，在多个annotation组合成一个新的annotation时有用，否则无法设置其属性。
+		 *
+		 * 这里虽然只会处理一级的@AliasFor替换，但是searchWithGetSemanticsInAnnotations是一个递归调用，因此可以处理多级替换
+		 * */
 		@Override
 		public void postProcess(AnnotatedElement element, Annotation annotation, AnnotationAttributes attributes) {
 			annotation = AnnotationUtils.synthesizeAnnotation(annotation, element);

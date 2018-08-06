@@ -129,7 +129,7 @@ public class AnnotationConfigUtils {
 
 	/**
 	 * <p>
-	 * 具体行为参考{@link registerAnnotationConfigProcessors}
+	 * 具体行为参考{@link #registerAnnotationConfigProcessors(BeanDefinitionRegistry registry, Object source)}
 	 * </p>
 	 * 
 	 * Register all relevant annotation post processors in the given registry.

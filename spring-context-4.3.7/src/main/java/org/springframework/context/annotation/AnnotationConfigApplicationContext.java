@@ -58,7 +58,16 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * through {@link #register} calls and then manually {@linkplain #refresh refreshed}.
 	 */
 	public AnnotationConfigApplicationContext() {
+		/*
+		* 注册用于Annotation配置下的特殊bean，例如@Configuration的BeanDefinitionPostProcessor等，
+		* 典型配置中使用，例如
+		* new AnnotationConfigApplicationContext(App.class);
+		* */
 		this.reader = new AnnotatedBeanDefinitionReader(this);
+		/*
+		* 注册ClassPathBeanDefinition，用于搜索@Component(包括meta annoatatioin)注册的组件，例如@Service、@Configuration，
+		* 当通过指定package来获取初始配置时使用
+		* */
 		this.scanner = new ClassPathBeanDefinitionScanner(this);
 	}
 
